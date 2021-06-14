@@ -62,15 +62,15 @@
           </v-icon>
         
         </template>
-        <template  v-slot:[`item.actions`]="{ item }">
+        <template  v-slot:[`item.actions`]="{ item }">             
             <v-icon
               small
               class="mr-4"
               @click="editItem(item)"
+              color="red"
             >
               fa fa-edit
-            </v-icon>
-           
+            </v-icon>   
             <v-icon
               small
               class="ml-4"
@@ -78,6 +78,7 @@
             >
              fa fa-trash
             </v-icon>
+            
         </template>
         </v-data-table>
       </div>
@@ -122,7 +123,7 @@ export default {
           class: "thead-light",
         },
         {
-          text: "Propietario",
+          text: "Expositor",
           align: "center",
           sortable: true,
           value: "owner",
@@ -133,6 +134,13 @@ export default {
           align: "center",
           sortable: true,
           value: "breeder",
+          class: "thead-light",
+        },
+        {
+          text: "Asociación",
+          align: "center",
+          sortable: true,
+          value: "asociation",
           class: "thead-light",
         },
         {
@@ -154,6 +162,7 @@ export default {
       axios.get("participant")
 			.then(res => {
 				this.data = res.data
+        console.log(this.data)
          this.data = res.data.map(function(x) {
                 x.owner = (x.owner == true) ? 'fa fa-check' : ''
                 x.breeder = (x.breeder == true) ? 'fa fa-check' : ''
@@ -191,6 +200,9 @@ export default {
       },
       editItem (item) {
         this.$router.push({ name: 'EditarParticipante', params: { item: item } })
+      },
+      addAnimal(item){
+        console.log(item)
       }
 }
 }

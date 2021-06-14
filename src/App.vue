@@ -62,6 +62,11 @@ export default {
               title: "Participantes",
               icon: "fa fa-hat-cowboy-side",
             },
+            {
+              href: "/equipos/index",
+              title: "Equipos",
+              icon: "fa fa-sitemap",
+            },
           ],
         },
         {
@@ -89,12 +94,6 @@ export default {
               title:"Categorias",
               icon: "fa fa-sort-amount-up"
             },
-            {
-              href:"/config/subcategoria",
-              title:"SubCategorias",
-              icon: "fa fa-sort-amount-up"
-            },
-            
           ]
         },
       ],

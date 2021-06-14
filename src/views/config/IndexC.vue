@@ -30,7 +30,7 @@
                   
                   <v-row>
                     <v-col cols="12" sm="12" md="12">
-                      <v-form>
+                      <v-form ref="form">
                       <v-text-field
                         v-model="form.name"
                         label="Categoria"
@@ -41,6 +41,37 @@
                     </v-col>
                     <v-col cols="12" sm="<template>6" md="4"> </v-col>
                   </v-row>
+                  <v-row>
+                    <v-col cols="12" md="6"> 
+                    <v-text-field
+                      v-model="form.min"
+                      label="Días Minimos" 
+                      :rules="rules.numbers"
+                      type="number"
+                    >  
+                    </v-text-field> 
+                      
+                  </v-col>
+                  <v-col cols="12" md="6"> 
+                    <v-text-field
+                      v-model="form.max"
+                      label="Días Máximos" 
+                      :rules="rules.numbers"
+                      type="number"
+                    > 
+                    </v-text-field> 
+                      
+                  </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" md="6"> 
+                      <v-checkbox
+                      v-model="form.exhibition"
+                      label="Exhibición"
+                    ></v-checkbox>
+                    </v-col>
+                  </v-row>
+
                 </v-container>
               </v-card-text>
              
@@ -70,7 +101,7 @@
       <v-col md="12">
         <v-data-table
           :headers="headers"
-          :items="data"
+          :items="categorys"
           loading
           loading-text="Please wait"
           :search="search"
@@ -117,6 +148,9 @@ export default {
       server: process.env.API_URL || 'http://localhost:3000',
       rules: {
         required: [(v) => !!v || "Campo requerido"],
+        numbers: [value => /^\d+$/.test(value)||'Solo números']
+          
+        
       },
       name:'',
       dialog:false,
@@ -126,11 +160,16 @@ export default {
       type: 0,
       pageCount: 0,
       data: [],
+      categorys:[],
       search: "",
       disabled: true,
       editedIndex: -1,
       form:{
-        name: ''
+        name: '',
+        category: [],
+        min:0,
+        max:0,
+        exhibition: false
       },
       headers: [
         {
@@ -138,6 +177,20 @@ export default {
           align: "start",
           sortable: false,
           value: "name",
+          class: "thead-light",
+        },
+        {
+          text: "Tipo",
+          align: "start",
+          sortable: true,
+          value: "type",
+          class: "thead-light",
+        },
+        {
+          text: "Parámetros",
+          align: "start",
+          sortable: true,
+          value: "parameters",
           class: "thead-light",
         },
         {
@@ -156,30 +209,47 @@ export default {
       },
     },
   created() {
-    this.getCategory();
+    //this.getSubcategory();
+    this.getCategory()
   },
   
   methods: {
+   
     getCategory() {
       axios
         .get("category")
         .then((res) => {
-          this.data = res.data;
+          console.log(res.data)  
+          this.categorys = res.data.map(function(x) {
+                x.type = (x.exhibition == true) ? 'Exhibición' : 'Puntos'
+                x.parameters = x.min+" - "+x.max+" días"
+                return x
+            })
         })
         .catch((err) => {
           console.error(err);
         });
     },
     close () {
-        this.form.name = ''
+        this.form.name = '',
+        this.form.min = '',
+        this.form.max = '',
         this.dialog = false
-        this.editedIndex = -1
+        this.editedIndex = -1,
+        this.form.exhibition = false
+       
       },
     editItem(item){
       this.disabled = false
-      this.editedIndex = this.data.indexOf(item)
+      this.editedIndex = this.categorys.indexOf(item)
       this.dialog = true
       this.form.name = item.name
+      this.form.category = item.category,
+      this.form.min = item.min,
+      this.form.max = item.max,
+      this.form.exhibition = item.exhibition
+
+
     },
       checkName(val){
         this.disabled = (val.length > 0) ? false : true
@@ -195,9 +265,9 @@ export default {
               message: res.data.message,
               type: "warning",
               position: "bottom",
-              duration: 5000,
+              duration: 3000,
             });
-            this.data.splice(pos, 1)
+            this.categorys.splice(pos, 1)
           } )
           .catch((err) => {
             console.error(err);
@@ -205,16 +275,13 @@ export default {
               message: "Ups!...ocurrió un error :(",
               type: "error",
               position: "bottom",
-              duration: 5000,
+              duration: 3000,
             });
           })
-        //this.editedIndex = this.desserts.indexOf(item)
-        //this.editedItem = Object.assign({}, item)
-        //this.dialogDelete = true
       },
       updateItem(item){
      
-        let pos = this.data.indexOf(item)
+        let pos = this.categorys.indexOf(item)
         axios
           .put(`/category/update/${item._id}`, this.form)
           .then(res => {
@@ -222,10 +289,13 @@ export default {
               message: res.data.message,
               type: "warning",
               position: "bottom",
-              duration: 5000,
+              duration: 3000,
             });
             
-            this.data[pos].name = this.form.name.toUpperCase()
+            this.categorys[pos].name = this.form.name.toUpperCase()
+            this.categorys[pos].type = (this.form.exhibition == true) ? 'Exhibición' : 'Puntos'
+            this.categorys[pos].exhibition = this.form.exhibition
+            this.categorys[pos].parameters = this.form.min+" - "+this.form.max+" días"
             this.form.name = ''
             this.dialog = false
             this.editedIndex = -1
@@ -236,14 +306,15 @@ export default {
               message: "Ups!...ocurrió un error :(",
               type: "error",
               position: "bottom",
-              duration: 5000,
+              duration: 3000,
             });
           })
       },
       
     save(){
+     
       if (this.editedIndex > -1) {
-        this.updateItem(this.data[this.editedIndex])
+        this.updateItem(this.categorys[this.editedIndex])
       }else{
         axios
         .post(`/category/register`, this.form)
@@ -252,13 +323,18 @@ export default {
             message: res.data.message,
             type: "success",
             position: "bottom",
-            duration: 5000,
+            duration: 3000,
           });
+           
+           res.data.category.type = (res.data.category.exhibition == true) ? 'Exhibición' : 'Puntos'
+           res.data.category.parameters = res.data.category.min+" - "+res.data.category.max+" días"
            console.log(res.data)
-           this.data.push(res.data.category)
-           this.form.name = ''
-           this.disabled = true
+           this.categorys.push(res.data.category)
+           this.$refs.form.reset()
+           this.form.min = 0
+           this.form.max = 0
            this.editedIndex = -1
+           this.disabled = true
         })
         .catch((err) => {
           console.error(err);
@@ -266,7 +342,7 @@ export default {
             message: "Ups!...ocurrió un error :(",
             type: "error",
             position: "bottom",
-            duration: 5000,
+            duration: 3000,
           });
         });
 

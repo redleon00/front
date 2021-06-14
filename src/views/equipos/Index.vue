@@ -10,11 +10,11 @@
       <div class="col-md-2">
        <div data-app>   
         <v-tooltip bottom>
-          <!--<template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ on, attrs }">
             <v-btn class="mx-2" fab small dark v-bind="attrs" v-on="on" :to="link">
               <v-icon dark> fa fa-plus </v-icon>
             </v-btn>
-          </template>-->
+          </template>
           <span>Agregar Nuevo</span>
         </v-tooltip>
         </div>
@@ -44,15 +44,38 @@
           class="border"
           id="table"
         >
-        <template  v-slot:[`item.actions`]="{ item }">
+         <template v-slot:[`all_teams.owner`]="{ item }">
+          
+            {{ item.all_teams.owner }}
+          
+        </template>
+        <template v-slot:[`item.owner`]="{ item }">
+          <v-icon
+            color="blue"
+            small
+          >
+          {{ item.owner }}
+          </v-icon>
+        
+        </template>
+        <template v-slot:[`item.breeder`]="{ item }">
+          <v-icon
+            color="blue"
+            small
+          >
+          {{ item.breeder }}
+          </v-icon>
+        
+        </template>
+        <template  v-slot:[`item.actions`]="{ item }">             
             <v-icon
               small
               class="mr-4"
               @click="editItem(item)"
+              color="red"
             >
               fa fa-edit
-            </v-icon>
-           
+            </v-icon>   
             <v-icon
               small
               class="ml-4"
@@ -60,6 +83,7 @@
             >
              fa fa-trash
             </v-icon>
+            
         </template>
         </v-data-table>
       </div>
@@ -74,106 +98,90 @@
 </template>
 <script>
 import axios from "@/axios"
-
 export default {
-    /*components: {
-        DataTable: () => import("../../components/DataTable")
-    },*/
-  
+   
   data() {
     return {
-      server: process.env.API_URL || 'http://localhost:3000',
-      title: "Animales",
+      title: "Equipos",
       isLoading: false,
       page: 1,
       type: 0,
       pageCount: 0,
       data: [],
       search: "",
-      link: "/animales/nuevo",
+      link:"/equipos/nuevo",
       headers: [
         {
-          text: "Nombre",
+          text: "Participante",
           align: "start",
-          sortable: false,
+          sortable: true,
+          value: "participant",
+          class: "thead-light",
+        },
+        {
+          text: "Nombre del Equipo",
+          align: "center",
+          sortable: true,
           value: "name",
           class: "thead-light",
         },
         {
-          text: "Sexo",
-          align: "start",
+          text: "Especie",
+          align: "center",
           sortable: true,
-          value: "sex",
+          value: "animal_type",
           class: "thead-light",
         },
         {
-          text: "Raza",
+          text: "Numero de Ejemplares",
           align: "center",
           sortable: true,
-          value: "race",
+          value: "all_teams.length",
           class: "thead-light",
         },
         {
-          text: "Categoria",
+          text: "Asociación",
           align: "center",
           sortable: true,
-          value: "category",
-          class: "thead-light",
-        },
-        {
-          text: "Propietario",
-          align: "center",
-          sortable: true,
-          value: "owner",
-          class: "thead-light",
-        },
-        {
-          text: "Criador",
-          align: "center",
-          sortable: true,
-          value: "breeder",
-          class: "thead-light",
-        },
-        {
-          text: "Equipo",
-          align: "center",
-          sortable: true,
-          value: "team",
+          value: "asociacion",
           class: "thead-light",
         },
         {
           text: "Acciones",
           align: "start",
           sortable: false,
+          value: "actions",
           class: "thead-light",
-          value: "actions"
         },
+
       ],
     };
   },
   created () {
-		this.getAnimals();
+		this.getTeams();
 	},
   methods: {
-    getAnimals(){
-      axios.get("animal")
+    getTeams(){
+      axios.get("teams")
 			.then(res => {
 				this.data = res.data
+        console.log("data", this.data)
 			})
 			.catch(err => {
 				console.error(err); 
 			})
+
     },
     deleteItem (item) {
         let pos = this.data.indexOf(item)
         axios
-          .post(`/animal/deleted/${item._id}`)
+          .post(`/teams/deleted/${item._id}`)
           .then( res => {
             this.$toast.open({
               message: res.data.message,
               type: "warning",
               position: "bottom",
-              duration: 5000,
+              duration: 3000,
             });
             this.data.splice(pos, 1)
           } )
@@ -183,15 +191,16 @@ export default {
               message: "Ups!...ocurrió un error :(",
               type: "error",
               position: "bottom",
-              duration: 5000,
+              duration: 3000,
             });
           })
         
       },
       editItem (item) {
-        this.$router.push({ name: 'EditarAnimal', params: { item: item } })
-      }
-  },
-  
-};
+        this.$router.push({ name: 'EditarEquipo', params: { item: item } })
+      },
+      
+     
+}
+}
 </script>

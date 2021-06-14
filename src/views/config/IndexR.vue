@@ -232,9 +232,7 @@ export default {
               duration: 5000,
             });
           })
-        //this.editedIndex = this.desserts.indexOf(item)
-        //this.editedItem = Object.assign({}, item)
-        //this.dialogDelete = true
+     
       },
       updateItem(item){
         let pos = this.data.indexOf(item)

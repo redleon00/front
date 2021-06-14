@@ -47,6 +47,30 @@
                     </v-col>
                     <v-col cols="12" sm="<template>6" md="4"> </v-col>
                   </v-row>
+                  
+                  <v-row>
+                    <v-col cols="12" md="6"> 
+                    <v-text-field
+                      v-model="form.min"
+                      label="Días Minimos" 
+                      :rules="rules.numbers"
+                      type="number"
+                    >  
+                    </v-text-field> 
+                      
+                  </v-col>
+                  <v-col cols="12" md="6"> 
+                    <v-text-field
+                      v-model="form.max"
+                      label="Días Máximos" 
+                      :rules="rules.numbers"
+                      type="number"
+                    > 
+                    </v-text-field> 
+                      
+                  </v-col>
+                  </v-row>
+
                 </v-container>
               </v-card-text>
              
@@ -123,6 +147,9 @@ export default {
       server: process.env.API_URL || 'http://localhost:3000',
       rules: {
         required: [(v) => !!v || "Campo requerido"],
+        numbers: [value => /^\d+$/.test(value)||'Solo números']
+          
+        
       },
       name:'',
       dialog:false,
@@ -138,7 +165,9 @@ export default {
       editedIndex: -1,
       form:{
         name: '',
-        category: []
+        category: [],
+        min:0,
+        max:0
       },
       headers: [
         {
@@ -213,7 +242,10 @@ export default {
       this.editedIndex = this.data.indexOf(item)
       this.dialog = true
       this.form.name = item.name
-      this.form.category = item.category
+      this.form.category = item.category,
+      this.form.min = item.min,
+      this.form.max = item.max
+
 
     },
       checkName(val){

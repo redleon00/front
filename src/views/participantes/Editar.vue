@@ -50,6 +50,19 @@
               </v-row> 
             </v-col>
           </v-row>
+          <v-row>
+            
+            <v-col cols="12" md="4">
+            <v-select
+                v-model="form.asociation"
+                label="Asociación"
+                class="form-control-sm"
+                :rules="rules.required"
+                required
+                :items="asociations"
+              />
+            </v-col>
+          </v-row>
            <v-divider></v-divider>
           <v-spacer></v-spacer><v-spacer></v-spacer>
           <v-card-actions>
@@ -78,12 +91,14 @@ export default {
             name: "",
             state: "",
             owner: true,
-            breeder: true
+            breeder: true,
+            asociation: ''
         },
         states: ["DISTRITO CAPITAL", "AMAZONAS", "ANZOATEGUI", "APURE", "ARAGUA", "BARINAS",
          "BOLIVAR", "CARABOBO", "COJEDES", "DELTA AMACURO", "FALCON", "GUARICO", "LARA", "MERIDA",
          "MIRANDA", "MONAGAS", "NUEVA ESPARTA", "PORTUGUESA", "SUCRE", "TACHIRA","TRUJILLO", "YARACUY",
          "ZULIA", "LA GUAIRA"],
+        asociations:['AVCO', 'ASOOVINOS', 'ASOCABRA', 'OTRO'],    
         link: "/participantes/index", 
         dataParticipant:[]  ,
         id: '',
@@ -98,6 +113,7 @@ export default {
       this.form.state = this.dataParticipant.state
       this.form.owner = (this.dataParticipant.owner.length == 0) ? false : true
       this.form.breeder = (this.dataParticipant.breeder.length == 0) ? false : true
+      this.form.asociation = this.dataParticipant.asociation
   },
   methods: {
     

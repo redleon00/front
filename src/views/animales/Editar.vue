@@ -3,34 +3,69 @@
     <v-card elevation="23">
       <v-card-text>
         <v-form ref="form" @submit.prevent="submit">
-          <v-row>
-            <v-col class="h3 font-weight-bold"
-              >Editar Animal</v-col
-            >
-          </v-row>
+          <v-card-title class="h3 font-weight-bold">
+            Editar Animal
+          </v-card-title>
           <v-divider></v-divider>
+
           <v-row>
-            <v-col cols="12" md="4">
+            <v-col cols="12" sm="6" md="4">
               <v-text-field
-                label="Nombre"
-                v-model="form.name"
-                class="form-control-sm"
+                v-model="form.register"
+                label="Nº de Registro"
                 :rules="rules.required"
-                required
               ></v-text-field>
-            </v-col>    
-            <v-col cols="12" md="4">
-                <v-combobox
-                  v-model="form.race"
-                  label="Raza"
-                  :items="races"
-                  class="form-control-sm"
-                  :rules="rules.required"
-                  required
-                ></v-combobox>
             </v-col>
-            <v-col cols="12" md="4">
-               <v-radio-group v-model="form.sex" row>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                v-model="form.tatoo"
+                label="Tatuaje"
+                :rules="rules.required"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                v-model="form.name"
+                label="Nombre"
+                :rules="rules.required"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" sm="6" md="4">
+              <v-menu
+                v-model="menu2"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="date"
+                    label="Fecha de Nacimiento"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    :rules="rules.required"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="date"
+                  @input="menu2 = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                v-model="form.category"
+                label="Categoria"
+                readonly
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <v-radio-group v-model="form.sex" row :rules="rules.required">
                 <v-radio
                   label="Macho"
                   value="M"
@@ -45,61 +80,56 @@
                 ></v-radio>
               </v-radio-group>
             </v-col>
-          </v-row> 
+          </v-row>
           <v-row>
-              <v-col cols="12" md="6">
-                 <v-combobox
-                  v-model="form.category"
-                  label="Categoria"
-                  :items="categorys"
-                  class="form-control-sm"
-                  :rules="rules.required"
-                  required
-                  @change="setSubcategory"
-                ></v-combobox>
-              </v-col>  
-              <v-col cols="12" md="6"> 
-                 <v-combobox
-                  v-model="form.subcategory"
-                  label="Subcategoria"
-                  :items="subcategorys2"
-                  class="form-control-sm"
-                  :rules="rules.required"
-                  required
-                ></v-combobox> 
-              </v-col>  
-          </v-row>   
-          <v-row>
-              <v-col cols="12" md="6">
-                 <v-combobox
-                  v-model="form.owner"
-                  label="Propietario"
-                  :items="participants"
-                  class="form-control-sm"
-                  :rules="rules.required"
-                  required
-                ></v-combobox>
-              </v-col> 
-              <v-col cols="12" md="6">
-                <v-combobox
-                  v-model="form.breeder"
-                  label="Criador"
-                  :items="participants"
-                  class="form-control-sm"
-                  :rules="rules.required"
-                  required
-                ></v-combobox>
-              </v-col>           
-          </v-row>   
-           <v-divider></v-divider>
-          <v-spacer></v-spacer><v-spacer></v-spacer>
+            <v-col cols="12" md="4">
+              <v-combobox
+                v-model="form.race"
+                label="Raza"
+                item-text="name"
+                item-value="name"
+                :items="races"
+                class="form-control-sm"
+                :rules="rules.required"
+                required
+              ></v-combobox>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-combobox
+                v-model="form.breeder"
+                label="Criador"
+                item-text="name"
+                item-value="name"
+                :items="breeders"
+                class="form-control-sm"
+                :rules="rules.required"
+                required
+              ></v-combobox>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-combobox
+                v-model="form.team"
+                label="Equipo"
+                item-text="name"
+                item-value="name"
+                :items="teams"
+                class="form-control-sm"
+                :rules="rules.required"
+                required
+              ></v-combobox>
+            </v-col>
+          </v-row>
           <v-card-actions>
-          <v-btn text :to="link">
-            <v-icon dark> fa fa-arrow-left </v-icon>
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="submit"> Aceptar </v-btn>
-        </v-card-actions> 
+            <v-btn text :to="link">
+              <v-icon dark> fa fa-arrow-left </v-icon>
+            </v-btn>
+
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="submit"
+              ><!--:disabled="disableAccept" -->
+              Aceptar
+            </v-btn>
+          </v-card-actions>
         </v-form>
       </v-card-text>
     </v-card>
@@ -107,6 +137,7 @@
 </template>        
 <script>
 import axios from "@/axios";
+import moment from "moment";
 export default {
   data() {
     return {
@@ -122,39 +153,82 @@ export default {
         sex: "M",
         race: "",
         category: "",
-        subcategory: "",
         owner: "",
         breeder: "",
+        register: "",
+        tatoo: "",
+        team: "",
+        changeTeam: false,
+        oldteam: "",
+        birthday: ""
       },
       races: [],
       categorys: [],
-      subcategorys: [],
-      subcategorys2: [],
       participants: [],
-      animalData : [],
-      id: ''
+      animalData: [],
+      id: "",
+      teams: [],
+      breeders: [],
+      date:new Date().toISOString().substr(0, 10),
+      menu2: false,
     };
   },
-  created () {
-    
-    this.animalData = this.$router.history.current.params.item
-    this.id =   this.animalData._id
-    this.form.name = this.animalData.name
-    this.form.sex = this.animalData.sex
-    this.form.race = this.animalData.race
-    this.form.category = this.animalData.category
-    this.form.subcategory = this.animalData.subcategory
-    this.form.owner = this.animalData.owner
-    this.form.breeder = this.animalData.breeder
+  created() {
     this.getParticipants();
     this.getRaces();
     this.getCategory();
-    this.getSubcategory();
-	},
+    this.getTeam();
+    this.animalData = this.$router.history.current.params.item;
+    this.id = this.animalData._id;
+    this.form.register = this.animalData.register;
+    this.form.tatoo = this.animalData.tatoo;
+    this.form.name = this.animalData.name;
+    this.form.sex = this.animalData.sex;
+    this.form.race = this.animalData.race;
+    this.form.category = this.animalData.category;
+    this.form.owner = this.animalData.owner;
+    this.form.breeder = this.animalData.breeder;
+    this.date = this.animalData.birthday.slice(0, 10);
+    this.form.team = this.animalData.team;
+    console.log("created", this.animalData)
+    
+  },
+  watch: {
+    date(val) {
+      let birth = moment(val);
+      let today = moment("2021-07-10");
+      let days = today.diff(birth, "days");
+      let category = this.categorys.filter(
+        (x) => days >= x.min && days <= x.max
+      );
+
+      if (days >= 90) {
+        this.form.category = category[0].name;
+      } else if (days < 90 && days >= 0) {
+        this.$toast.open({
+          message: "Ejemplar no cumple con la edad mínima para concursar",
+          type: "error",
+          position: "bottom",
+          duration: 3000,
+        });
+      } else {
+        this.$toast.open({
+          message: "Fecha Inválida",
+          type: "error",
+          position: "bottom",
+          duration: 3000,
+        });
+      }
+    },
+  },
   methods: {
     submit() {
+     this.form.birthday = this.date;
+      if (this.form.team.toUpperCase() !== this.animalData.team.toUpperCase()) {
+          this.form.changeTeam = true;
+      }
       axios
-        .put(`/animal/update/${this.id}`, this.form)
+        .put(`/animal/updateOne/${this.id}`, this.form)
         .then((res) => {
           this.$toast.open({
             message: res.data.message,
@@ -162,8 +236,7 @@ export default {
             position: "bottom",
             duration: 5000,
           });
-           this.$refs.form.reset()
-           this.sex = 'M'
+          //this.$refs.form.reset();
         })
         .catch((err) => {
           console.error(err);
@@ -175,25 +248,28 @@ export default {
           });
         });
     },
-    getParticipants(){
-      axios.get("participant")
-			.then(res => {
-        this.participants = res.data.map(function(x) {
-                return x.name
-            })
-			})
-			.catch(err => {
-				console.error(err); 
-			})
-
+    getParticipants() {
+      axios
+        .get("participant")
+        .then((res) => {
+          this.participants = res.data.map(function (x) {
+            return x.name;
+          });
+          this.breeders = res.data.filter((x) => x.breeder == true);
+          this.breeders = this.breeders.map(function(x){ return x.name });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     getRaces() {
       axios
         .get("race")
         .then((res) => {
-          this.races = res.data.map(function(x) {
-                return x.name
-            })
+          this.races = res.data.filter(x => x.tipo == this.animalData.type)
+          this.races = this.races.map(function (x) {
+            return x.name;
+          });
         })
         .catch((err) => {
           console.error(err);
@@ -203,39 +279,28 @@ export default {
       axios
         .get("category")
         .then((res) => {
-          this.categorys = res.data.map(function(x) {
-                return x.name
-            })
+          this.categorys = res.data
         })
         .catch((err) => {
           console.error(err);
         });
     },
-    getSubcategory() {
+    getTeam() {
       axios
-        .get("subcategory")
+        .get("teams")
         .then((res) => {
-          this.subcategorys = res.data;
-          this.subcategorys2 = this.subcategorys.filter(
-                p => p.category === this.form.category
-            );
-            this.subcategorys2 = this.subcategorys2.map(function(x) {
-                        return x.name
-                    })
+          console.log("teams", res.data)
+          this.teams = res.data.filter(
+            (x) => x.participant == this.animalData.owner && x.animal_type == this.animalData.animal_type
+          );
+          this.teams = this.teams.map(function (x) {
+            return x.name;
+          })
         })
         .catch((err) => {
           console.error(err);
         });
     },
-    setSubcategory(){
-      this.form.subcategory = ''
-      this.subcategorys2 = this.subcategorys.filter(
-        p => p.category === this.form.category
-      );
-      this.subcategorys2 = this.subcategorys2.map(function(x) {
-                return x.name
-            })
-    }
   },
 };
 </script>

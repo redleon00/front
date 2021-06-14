@@ -41,6 +41,22 @@ const routes = [
       name: 'EditarAnimal',
       component: () => import(/* webpackChunkName: "about" */ '../views/animales/Editar.vue')
     },
+    // Equipos
+    {
+      path: '/equipos/index',
+      name: 'ListadoEquipos',
+      component: () => import('../views/equipos/Index.vue')
+    },
+    {
+      path: '/equipos/nuevo',
+      name: 'NuevoEquipo',
+      component: () => import('../views/equipos/Nuevo.vue')
+    },
+    {
+      path: '/equipos/editar/:item',
+      name: 'EditarEquipo',
+      component: () => import('../views/equipos/Editar.vue')
+    },
     //Configuraciones
     {
       path: '/config/raza',
