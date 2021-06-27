@@ -9,10 +9,10 @@
           <v-divider></v-divider>
           <v-row>
             <v-col cols="12" md="4">
-              <v-select
+              <v-combobox
                 v-model="form.participant"
                 label="Productor"
-                :items="data"
+                :items="productors"
                 item-text="name"
                 item-value="name"
                 class="form-control-sm"
@@ -20,7 +20,7 @@
                 required
                 :disabled="team_save"
                 @change="change_product"
-              ></v-select>
+              ></v-combobox>
             </v-col>
 
             <v-col cols="12" md="4">
@@ -180,8 +180,9 @@
                         </v-col>
                       </v-row>
                       <v-row>
+                        
                         <v-col cols="12" md="4">
-                          <v-combobox
+                           <v-combobox
                             v-model="form2.race"
                             label="Raza"
                             item-text="name"
@@ -193,7 +194,7 @@
                           ></v-combobox>
                         </v-col>
                         <v-col cols="12" md="4">
-                          <v-combobox
+                         <v-combobox
                             v-model="form2.breeder"
                             label="Criador"
                             item-text="name"
@@ -204,7 +205,21 @@
                             required
                           ></v-combobox>
                         </v-col>
+
+                        <v-col cols="12" md="4">
+                           <v-select
+                              v-model="form2.asociation"
+                              label="Asociación"
+                              class="form-control-sm"
+                              :rules="rules.required"
+                              required
+                              :items="asociations"
+                              item-text="name"
+                              item-value="name"
+                            />
+                        </v-col>
                       </v-row>
+                      
                       <v-card-actions>
                         <v-btn color="red" text @click="cerrar"> Cerrar </v-btn>
 
@@ -292,7 +307,6 @@ export default {
         participant: "",
         name: "",
         animal_type: "OVINO",
-        asociation: "",
       },
       form2: {
         name: "",
@@ -306,9 +320,13 @@ export default {
         team: '',
         birthday:'',
         type: '' ,//animal specimen Caprino u Ovino,
-        race: ''
+        race: '',
+        asociation: '',
+        group:'',
+        
       },
       data: [],
+      productors:[],
       team_save: false,
       selectedIndex: 0,
       disabled_button: false,
@@ -325,6 +343,8 @@ export default {
       breeders: [],
       categorys: [],
       activate: true,
+      asociations:[], 
+      message:'',   
       headers: [
         {
           text: "Nombre",
@@ -368,13 +388,13 @@ export default {
           value: "category",
           class: "thead-light",
         },
-        /*{
-          text: "Expositor",
+        {
+          text: "Asociación",
           align: "center",
           sortable: false,
-          value: "owner",
+          value: "asociation",
           class: "thead-light",
-        },*/
+        },
         {
           text: "Criador",
           align: "center",
@@ -398,14 +418,14 @@ export default {
       let today = moment('2021-07-10');
       
       let days = today.diff(birth, "days");
-      console.log(days)
+      //console.log(days)
       let category = this.categorys.filter(
         (x) => days >= x.min && days <= x.max
       );
     
       if (days >= 90) {
         this.form2.categoria = category[0].name;
-        //this.form2.subcategoria = category[0].name;
+        this.form2.group = category[0].group;
       } else if (days < 90 && days >= 0) {
         this.$toast.open({
           message: "Ejemplar no cumple con la edad mínima para concursar",
@@ -427,31 +447,20 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo Ejemplar" : "Editar Ejemplar";
     },
-    /*disableAccept() {
-      if (
-        this.form2.name.length == 0 ||
-        this.form2.tatoo.length == 0 ||
-        this.form2.register.length == 0 ||
-        this.form2.categoria.length == 0 ||
-        this.form2.breeder.length == 0
-      ) {
-        return true;
-      }
-      return false;
-    },*/
   },
   created() {
     this.getExpositors();
     this.getRaces();
     this.getCategory();
+    this.getAsoc();
   },
   methods: {
     getExpositors() {
       axios
         .get("participant")
         .then((res) => {
-          this.data = res.data;
-          this.data = res.data.filter((x) => x.owner == true);
+         // console.log("this.productors", res.data)
+          this.productors = res.data.filter((x) => x.owner == true);
           this.breeders = res.data.filter((x) => x.breeder == true);
           
         })
@@ -459,6 +468,17 @@ export default {
           console.error(err);
         });
     },
+      getAsoc() {
+        axios
+          .get("asociations")
+          .then((res) => {
+            //console.log(res)
+            this.asociations = res.data;
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      },
     submit() {
       this.form.name = this.form.name.toUpperCase();
       axios
@@ -473,10 +493,11 @@ export default {
           this.team_save = true;
           this.t = res.data.t;
           this.activate = false;
-          this.races = this.allRaces.filter(
+          /*this.races = this.allRaces.filter(
             (x) => x.tipo === this.t.animal_type
-          );
-          console.log("las res..", this.t);
+          );*/
+          this.getExpositors();
+         
         })
         .catch((err) => {
           console.error(err);
@@ -489,49 +510,22 @@ export default {
         });
     },
     change_product() {
-      
-      let dato = this.data.filter((x) => x.name == this.form.participant);
-      axios
-        .get(`/teams/getteam/${dato[0].name}`)
-        .then((res) => {
-          let team = res.data;
-          let consec = team.length + 1;
-          this.form.name = this.form.participant+" "+consec
-          if (team.length >= 3) {
-            this.form.participant = '';
-            this.form.name = '';
-            this.disabled_button = true;
-            this.$toast.open({
-              message: `${team[0].participant} alcanzó numero máximo de equipos`,
-              type: "warning",
-              position: "top",
-              duration: 3000,
-            });
-          } else {
-            this.disabled_button = false;
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          this.$toast.open({
-            message: "Ups!...ocurrió un error :(",
-            type: "error",
-            position: "bottom",
-            duration: 5000,
-          });
-        });
-      this.form.asociation = dato[0].asociation;
+      this.form.participant = (typeof this.form.participant == "object") ? this.form.participant.name.toUpperCase() : this.form.participant.toUpperCase()
+      this.form.name = this.form.participant
     },
     getRaces() {
       axios
         .get("race")
         .then((res) => {
           this.allRaces = res.data;
-          //this.races = this.allRaces.filter(x => x.tipo === "OVINO")
+          this.races = this.allRaces.filter(x => x.tipo === "OVINO")
         })
         .catch((err) => {
           console.error(err);
         });
+    },
+    change_races(){ 
+      this.races = this.allRaces.filter(x => x.tipo === this.form.animal_type)
     },
     getCategory() {
       axios
@@ -557,17 +551,12 @@ export default {
       this.form2.ID_team = this.t._id;
       this.form2.birthday = this.date;
       this.form2.team = this.t.name
-      this.form2.type = this.t.animal_type
+      this.form2.type = this.form.animal_type
       this.form2.owner = this.t.participant
       let animal_per_race = this.animals.filter((x) => x.race == this.form2.race.name)
       let animal_per_team = this.animals.length
       //console.log(this.animals)
-      let message = ''
-      if(animal_per_race.length > 3){
-        message = "Ha alcanzado el número máximo de ejemplares para esta RAZA en este equipo"
-      }else if(animal_per_team > 9){
-        message = "Ha alcanzado el número de ejemplares para este equipo"
-      }
+      //let message = ''
           
       if((animal_per_race.length < 4) && (animal_per_team < 10)){
         axios
@@ -579,10 +568,9 @@ export default {
             position: "bottom",
             duration: 3000,
           });
-          console.log(res.data.animal)
           this.animals.push(res.data.animal)
           this.resetform2()
-          //this.$refs.form2.reset();
+          this.getExpositors()
         })
         .catch((err) => {
           console.error(err);
@@ -594,8 +582,14 @@ export default {
           });
         });
       }else{
+        if(animal_per_race.length > 4){
+          this.message = "Ha alcanzado el número máximo de ejemplares para esta RAZA en este equipo"  
+        }else if(animal_per_team > 10){
+          this.message = "Ha alcanzado el número de ejemplares para este equipo"
+          
+        }
         this.$toast.open({
-            message: message,
+            message: this.message,
             type: "warning",
             position: "top",
             duration: 3000,
@@ -614,12 +608,16 @@ export default {
       this.form2.birth = ''
       this.form2.categoria = ''
       this.form2.race = ''
-      this.form2.breeder = ''
+      this.form2.breeder = '',
+      this.form2.asociation = ''
+      this.form2.group = ''
 
     },
     editItem(item){
       //this.disableAccept = false
       //this.disabled = false
+      //console.log(item)
+      this.getExpositors();
       this.editedIndex = this.animals.indexOf(item)
       this.dialog = true
       this.form2.name = item.name
@@ -628,12 +626,13 @@ export default {
       this.form2.categoria = item.category
       this.form2.race = item.race
       this.form2.breeder = item.breeder
+      this.form2.asociation = item.asociation
       this.date = item.birthday.slice(0,10)
 
       
     },
     updateItem(item){
-      console.log(this.form2)
+     // console.log(this.form2)
       this.form2.birthday = this.date;
       let pos = this.animals.indexOf(item)
       axios

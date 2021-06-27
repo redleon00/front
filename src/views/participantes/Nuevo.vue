@@ -50,7 +50,7 @@
               </v-row> 
             </v-col>
           </v-row>
-          <v-row>
+          <!--<v-row>
             
             <v-col cols="12" md="4">
             <v-select
@@ -62,7 +62,7 @@
                 :items="asociations"
               />
             </v-col>
-          </v-row>
+          </v-row>-->
            <v-divider></v-divider>
           <v-spacer></v-spacer><v-spacer></v-spacer>
           <v-card-actions>
@@ -92,13 +92,13 @@ export default {
         state: "",
         owner: true,
         breeder: true,
-        asociation: ''
+        //asociation: ''
       },
       states: ["DISTRITO CAPITAL", "AMAZONAS", "ANZOATEGUI", "APURE", "ARAGUA", "BARINAS",
          "BOLIVAR", "CARABOBO", "COJEDES", "DELTA AMACURO", "FALCON", "GUARICO", "LARA", "MERIDA",
          "MIRANDA", "MONAGAS", "NUEVA ESPARTA", "PORTUGUESA", "SUCRE", "TACHIRA","TRUJILLO", "YARACUY",
          "ZULIA", "LA GUAIRA"],
-      asociations:['AVCO', 'ASOOVINOS', 'ASOCABRA', 'CAVIDOC','OTRO'],    
+      //asociations:['AVCO', 'ASOOVINOS', 'ASOCABRA', 'CAVIDOC','OTRO'],    
       link: "/participantes/index", 
       data: []  
     };

@@ -119,6 +119,18 @@
               ></v-combobox>
             </v-col>
           </v-row>
+          <v-row>
+           <v-col cols="12" md="4">
+              <v-select
+                  v-model="form.asociation"
+                  label="Asociación"
+                  class="form-control-sm"
+                  :rules="rules.required"
+                  required
+                  :items="asociations"
+                />
+            </v-col>
+          </v-row>              
           <v-card-actions>
             <v-btn text :to="link">
               <v-icon dark> fa fa-arrow-left </v-icon>
@@ -160,7 +172,9 @@ export default {
         team: "",
         changeTeam: false,
         oldteam: "",
-        birthday: ""
+        birthday: "",
+        asociation: "",
+        group:""
       },
       races: [],
       categorys: [],
@@ -171,6 +185,7 @@ export default {
       breeders: [],
       date:new Date().toISOString().substr(0, 10),
       menu2: false,
+      asociations:['AVCO', 'ASOOVINOS', 'ASOCABRA', 'CAVIDOC','OTRO'],    
     };
   },
   created() {
@@ -190,6 +205,8 @@ export default {
     this.form.breeder = this.animalData.breeder;
     this.date = this.animalData.birthday.slice(0, 10);
     this.form.team = this.animalData.team;
+    this.form.asociation = this.animalData.asociation;
+    this.form.group = this.animalData.group;
     console.log("created", this.animalData)
     
   },
@@ -204,6 +221,7 @@ export default {
 
       if (days >= 90) {
         this.form.category = category[0].name;
+        this.form.group = category[0].group;
       } else if (days < 90 && days >= 0) {
         this.$toast.open({
           message: "Ejemplar no cumple con la edad mínima para concursar",

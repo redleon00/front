@@ -34,22 +34,24 @@
             </v-col>
 
             <v-col cols="12" md="3">
-              <v-radio-group v-model="form.animal_type" row disabled>
-                <v-radio
-                  label="Ovino"
-                  value="OVINO"
-                  color="indigo"
-                  class="form-control-sm"
-                  :disabled="team_save"
-                ></v-radio>
-                <v-radio
-                  label="Caprino"
-                  value="CAPRINO"
-                  color="indigo"
-                  class="form-control-sm"
-                  :disabled="team_save"
-                ></v-radio>
-              </v-radio-group>
+                 <v-radio-group 
+                  v-model="form.type" 
+                  row 
+                  disabled
+                  >
+                  <v-radio
+                    label="Ovino"
+                    value="OVINO"
+                    color="indigo"
+                    class="form-control-sm"
+                  ></v-radio>
+                  <v-radio
+                    label="Caprino"
+                    value="CAPRINO"
+                    color="indigo"
+                    class="form-control-sm"
+                  ></v-radio>
+                </v-radio-group>
             </v-col>
           </v-row>
           <v-spacer></v-spacer><v-spacer></v-spacer>
@@ -173,7 +175,7 @@
                       </v-row>
                       <v-row>
                         <v-col cols="12" md="4">
-                          <v-combobox
+                         <v-combobox
                             v-model="form2.race"
                             label="Raza"
                             item-text="name"
@@ -195,6 +197,16 @@
                             :rules="rules.required"
                             required
                           ></v-combobox>
+                        </v-col>
+                        <v-col cols="12" md="4">
+                          <v-select
+                          v-model="form2.asociation"
+                          label="Asociación"
+                          class="form-control-sm"
+                          :rules="rules.required"
+                          required
+                          :items="asociations"
+                        />  
                         </v-col>
                       </v-row>
                       <v-card-actions>
@@ -290,8 +302,10 @@ export default {
         ID_team: "",
         team: "",
         birthday: "",
-        type: "", //animal specimen Caprino u Ovino,
+        type: "OVINO", //animal specimen Caprino u Ovino,
         race: "",
+        asociation: "",
+        group:"",
       },
       data: [],
       team_save: false,
@@ -311,6 +325,7 @@ export default {
       categorys: [],
       activate: true,
       teamData: [],
+      asociations:['AVCO', 'ASOOVINOS', 'ASOCABRA', 'CAVIDOC','OTRO'],    
       headers: [
         {
           text: "Nombre",
@@ -354,13 +369,13 @@ export default {
           value: "category",
           class: "thead-light",
         },
-        /*{
-          text: "Expositor",
+        {
+          text: "Asociación",
           align: "center",
           sortable: false,
-          value: "owner",
+          value: "asociation",
           class: "thead-light",
-        },*/
+        },
         {
           text: "Criador",
           align: "center",
@@ -383,7 +398,7 @@ export default {
     this.id = this.teamData._id;
     this.form.participant = this.teamData.participant;
     this.form.name = this.teamData.name;
-    this.form.animal_type = this.teamData.animal_type;
+    this.form.type = this.teamData.animal_type
     this.animals = this.teamData.all_teams;
     console.log("this.teamData", this.teamData);
     let cant = this.animals.length;
@@ -407,7 +422,7 @@ export default {
 
       if (days >= 90) {
         this.form2.categoria = category[0].name;
-        //this.form2.subcategoria = category[0].name;
+        this.form2.group = category[0].group;
       } else if (days < 90 && days >= 0) {
         this.$toast.open({
           message: "Ejemplar no cumple con la edad mínima para concursar",
@@ -449,12 +464,16 @@ export default {
         .then((res) => {
           this.allRaces = res.data;
           this.races = this.allRaces.filter(
-            (x) => x.tipo === this.form.animal_type
+            (x) => x.tipo === this.form.type
           );
         })
         .catch((err) => {
           console.error(err);
         });
+    },
+    change_races(){
+      this.form2.race = ""
+      this.races = this.allRaces.filter(x => x.tipo === this.form.type)
     },
     getCategory() {
       axios
@@ -482,6 +501,13 @@ export default {
       this.form2.categoria = item.category;
       this.form2.race = item.race;
       this.form2.breeder = item.breeder;
+      this.form2.asociation = item.asociation; 
+      this.form2.group = item.group; 
+      this.form2.type = item.type; 
+      this.races = this.allRaces.filter(x => x.tipo === this.form.type)
+      //this.change_races()
+
+
       this.date = item.birthday.slice(0, 10);
     },
     deleteItem(item) {
@@ -518,21 +544,13 @@ export default {
         this.form2.ID_team = this.id;
         this.form2.birthday = this.date;
         this.form2.team = this.teamData.name;
-        this.form2.type = this.teamData.animal_type;
+        //this.form2.type = this.teamData.animal_type;
         this.form2.owner = this.teamData.participant;
         let animal_per_race = this.animals.filter(
           (x) => x.race == this.form2.race.name
         );
         let animal_per_team = this.animals.length;
         //console.log(this.animals)
-        let message = "";
-        if (animal_per_race.length > 3) {
-          message =
-            "Ha alcanzado el número máximo de ejemplares para esta RAZA en este equipo";
-        } else if (animal_per_team > 9) {
-          message = "Ha alcanzado el número de ejemplares para este equipo";
-        }
-
         if (animal_per_race.length < 4 && animal_per_team < 10) {
           axios
             .post(`/animal/register`, this.form2)
@@ -546,6 +564,7 @@ export default {
               console.log(res.data.animal);
               this.animals.push(res.data.animal);
               this.resetform2();
+              this.getExpositors()
               //this.$refs.form2.reset();
             })
             .catch((err) => {
@@ -558,6 +577,12 @@ export default {
               });
             });
         } else {
+          let message = "";
+          if (animal_per_race.length > 3) {
+              message = "Ha alcanzado el número máximo de ejemplares para esta RAZA en este equipo"
+          } else if (animal_per_team > 10) {        
+              message = "Ha alcanzado el número de ejemplares para este equipo"
+          }
           this.$toast.open({
             message: message,
             type: "warning",
@@ -598,6 +623,8 @@ export default {
           this.animals[pos].birthday = this.form2.birthday;
           this.animals[pos].breeder = this.form2.breeder;
           this.animals[pos].sex = this.form2.sex;
+          this.animals[pos].asociation = this.form2.asociation;
+          this.animals[pos].group = this.form2.group;
           //console.log("animals", this.animals[pos])
           this.resetform2();
           this.dialog = false;
@@ -621,6 +648,8 @@ export default {
       this.form2.categoria = "";
       this.form2.race = "";
       this.form2.breeder = "";
+      this.form2.asociation = ""
+      this.form2.group = ""
     },
   },
 };

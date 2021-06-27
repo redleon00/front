@@ -30,7 +30,7 @@ export default {
     // Sidebar width (expanded)
     width: {
       type: String,
-      default: '200px'
+      default: '220px'
     },
     
   },
@@ -39,7 +39,7 @@ export default {
       menu: [
         {
           header: true,
-          title: "Sistema Puntuador",
+          title: "Sistema Puntuador V1.0",
           hiddenOnCollapse: true,
         },
         {
@@ -48,7 +48,7 @@ export default {
           icon: "fa fa-home",
         },
         {
-          href: "",
+          href: "/registros",
           title: "Registros",
           icon: "fa fa-edit",
           child: [
@@ -72,12 +72,56 @@ export default {
         {
           href: "/competencia",
           title: "Competencia",
-          icon: "fa fa-trophy"
+          icon: "fa fa-trophy",
+          child:[
+            {
+              href:'/competencia/categoria',
+              title: 'Por Categorias',
+            },
+            {
+              href:'/competencia/grupo',
+              title: 'Por Grupo'
+            },
+            {
+              href:'/competencia/raza',
+              title: 'Por Razas'
+            },
+            {
+              href:'/competencia/supremo',
+              title: 'Supremo'
+            },
+            {
+              href:'/competencia/ceba',
+              title: 'Ovinos de Ceba'
+            },
+            {
+              href:'/competencia/lechera',
+              title: 'Cabras Lecheras'
+            },
+          ]
         },
         {
           href: "/resultados",
           title: "Resultados",
-          icon: "fa fa-result"
+          icon: "fa fa-chart-bar",
+          child:[
+            {
+              href: "/resultados/categoria",
+              title: "Categoria"
+            },
+            {
+              href: "/resultados/grupo",
+              title: "Grupo"
+            },
+            {
+              href: "/resultados/raza",
+              title: "Raza"
+            },
+            {
+              href: "/resultados/supremo",
+              title: "Supremo"
+            }
+          ]
         },
         {
           href: "/config",
@@ -92,6 +136,21 @@ export default {
             {
               href:"/config/categoria",
               title:"Categorias",
+              icon: "fa fa-sort-amount-up"
+            },
+            {
+              href:"/config/bd",
+              title:"Reset BD",
+              icon: "fa fa-sort-amount-up"
+            },
+            {
+              href:"/config/competitions",
+              title:"Crear Competencias",
+              icon: "fa fa-sort-amount-up"
+            },
+            {
+              href:"/config/asociations",
+              title:"Asociaciones",
               icon: "fa fa-sort-amount-up"
             },
           ]

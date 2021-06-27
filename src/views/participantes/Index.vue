@@ -137,13 +137,6 @@ export default {
           class: "thead-light",
         },
         {
-          text: "Asociación",
-          align: "center",
-          sortable: true,
-          value: "asociation",
-          class: "thead-light",
-        },
-        {
           text: "Acciones",
           align: "start",
           sortable: false,

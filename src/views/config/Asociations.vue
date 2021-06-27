@@ -30,10 +30,16 @@
                   
                   <v-row>
                     <v-col cols="12" sm="12" md="12">
-                      <v-form ref="form">
+                      <v-form>
                       <v-text-field
                         v-model="form.name"
-                        label="Categoria"
+                        label="Siglas"
+                        :rules="rules.required"
+                        @input="checkName"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="form.name_large"
+                        label="Nombre de la Asociación"
                         :rules="rules.required"
                         @input="checkName"
                       ></v-text-field>
@@ -41,45 +47,6 @@
                     </v-col>
                     <v-col cols="12" sm="<template>6" md="4"> </v-col>
                   </v-row>
-                  <v-row>
-                    <v-col cols="12" md="6"> 
-                    <v-text-field
-                      v-model="form.min"
-                      label="Días Minimos" 
-                      :rules="rules.numbers"
-                      type="number"
-                    >  
-                    </v-text-field> 
-                      
-                  </v-col>
-                  <v-col cols="12" md="6"> 
-                    <v-text-field
-                      v-model="form.max"
-                      label="Días Máximos" 
-                      :rules="rules.numbers"
-                      type="number"
-                    > 
-                    </v-text-field> 
-                      
-                  </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="12" md="6"> 
-                      <v-select
-                      v-model="form.group"
-                      label="Grupo"
-                      :items="groups"
-                      ></v-select>
-                    </v-col>
-                   
-                    <v-col cols="12" md="6"> 
-                      <v-checkbox
-                      v-model="form.exhibition"
-                      label="Exhibición"
-                    ></v-checkbox>
-                    </v-col>
-                  </v-row>
-
                 </v-container>
               </v-card-text>
              
@@ -109,7 +76,7 @@
       <v-col md="12">
         <v-data-table
           :headers="headers"
-          :items="categorys"
+          :items="data"
           loading
           loading-text="Please wait"
           :search="search"
@@ -156,58 +123,35 @@ export default {
       server: process.env.API_URL || 'http://localhost:3000',
       rules: {
         required: [(v) => !!v || "Campo requerido"],
-        numbers: [value => /^\d+$/.test(value)||'Solo números']
-          
-        
       },
       name:'',
       dialog:false,
-      title: "Categorias",
+      title: "Asociaciones Participantes",
       isLoading: false,
       page: 1,
       type: 0,
       pageCount: 0,
       data: [],
-      categorys:[],
       search: "",
       disabled: true,
       editedIndex: -1,
       form:{
         name: '',
-        category: [],
-        min:0,
-        max:0,
-        exhibition: false,
-        group:''
+        name_large: ''
       },
-      groups:["MENOR","JOVEN","ADULTO"],
       headers: [
         {
-          text: "Nombre",
+          text: "Asociación",
           align: "start",
           sortable: false,
           value: "name",
           class: "thead-light",
         },
         {
-          text: "Tipo",
+          text: "Nombre",
           align: "start",
           sortable: true,
-          value: "type",
-          class: "thead-light",
-        },
-        {
-          text: "Parámetros",
-          align: "start",
-          sortable: true,
-          value: "parameters",
-          class: "thead-light",
-        },
-        {
-          text: "Grupo",
-          align: "start",
-          sortable: true,
-          value: "group",
+          value: "name_large",
           class: "thead-light",
         },
         {
@@ -222,52 +166,37 @@ export default {
   },
   computed: {
       card_title () {
-        return this.editedIndex === -1 ? 'Nueva Categoria' : 'Editar Categoria'
+        return this.editedIndex === -1 ? 'Nueva Asociación' : 'Editar Asociación'
       },
     },
   created() {
-    //this.getSubcategory();
-    this.getCategory()
+    this.getAsoc();
   },
   
   methods: {
-   
-    getCategory() {
+    getAsoc() {
       axios
-        .get("category")
+        .get("asociations")
         .then((res) => {
-          console.log(res.data)  
-          this.categorys = res.data.map(function(x) {
-                x.type = (x.exhibition == true) ? 'Exhibición' : 'Puntos'
-                x.parameters = x.min+" - "+x.max+" días"
-                return x
-            })
+          console.log(res)
+          this.data = res.data;
         })
         .catch((err) => {
           console.error(err);
         });
     },
     close () {
-        this.form.name = '',
-        this.form.min = '',
-        this.form.max = '',
+        this.form.name = ''
         this.dialog = false
-        this.editedIndex = -1,
-        this.form.exhibition = false
+        this.editedIndex = -1
        
       },
     editItem(item){
       this.disabled = false
-      this.editedIndex = this.categorys.indexOf(item)
+      this.editedIndex = this.data.indexOf(item)
       this.dialog = true
       this.form.name = item.name
-      this.form.category = item.category,
-      this.form.min = item.min,
-      this.form.max = item.max,
-      this.form.exhibition = item.exhibition
-      this.form.group = item.group
-
-
+      this.form.name_large = item.name_large
     },
       checkName(val){
         this.disabled = (val.length > 0) ? false : true
@@ -277,15 +206,15 @@ export default {
         
         let pos = this.data.indexOf(item)
         axios
-          .post(`/category/deleted/${item._id}`)
+          .post(`/asociations/deleted/${item._id}`)
           .then( res => {
             this.$toast.open({
               message: res.data.message,
               type: "warning",
               position: "bottom",
-              duration: 3000,
+              duration: 5000,
             });
-            this.categorys.splice(pos, 1)
+            this.data.splice(pos, 1)
           } )
           .catch((err) => {
             console.error(err);
@@ -293,29 +222,27 @@ export default {
               message: "Ups!...ocurrió un error :(",
               type: "error",
               position: "bottom",
-              duration: 3000,
+              duration: 5000,
             });
           })
+     
       },
       updateItem(item){
-     
-        let pos = this.categorys.indexOf(item)
+        let pos = this.data.indexOf(item)
         axios
-          .put(`/category/update/${item._id}`, this.form)
+          .put(`/asociations/update/${item._id}`, this.form)
           .then(res => {
               this.$toast.open({
               message: res.data.message,
               type: "warning",
               position: "bottom",
-              duration: 3000,
+              duration: 5000,
             });
             
-            this.categorys[pos].name = this.form.name.toUpperCase()
-            this.categorys[pos].type = (this.form.exhibition == true) ? 'Exhibición' : 'Puntos'
-            this.categorys[pos].exhibition = this.form.exhibition
-            this.categorys[pos].parameters = this.form.min+" - "+this.form.max+" días"
-            this.categorys[pos].group = this.form.group
+            this.data[pos].name = this.form.name.toUpperCase()
+            this.data[pos].tipo = this.form.tp
             this.form.name = ''
+            this.form.name_large = ''
             this.dialog = false
             this.editedIndex = -1
           })
@@ -325,35 +252,30 @@ export default {
               message: "Ups!...ocurrió un error :(",
               type: "error",
               position: "bottom",
-              duration: 3000,
+              duration: 5000,
             });
           })
       },
       
     save(){
-     
       if (this.editedIndex > -1) {
-        this.updateItem(this.categorys[this.editedIndex])
+        this.updateItem(this.data[this.editedIndex])
       }else{
         axios
-        .post(`/category/register`, this.form)
+        .post(`/asociations/register`, this.form)
         .then((res) => {
           this.$toast.open({
             message: res.data.message,
             type: "success",
             position: "bottom",
-            duration: 3000,
+            duration: 5000,
           });
            
-           res.data.category.type = (res.data.category.exhibition == true) ? 'Exhibición' : 'Puntos'
-           res.data.category.parameters = res.data.category.min+" - "+res.data.category.max+" días"
-           console.log(res.data)
-           this.categorys.push(res.data.category)
-           this.$refs.form.reset()
-           this.form.min = 0
-           this.form.max = 0
-           this.editedIndex = -1
+           this.data.push(res.data.race)
+           this.form.name = ''
+           this.form.name_large = ''
            this.disabled = true
+           this.editedIndex = -1
         })
         .catch((err) => {
           console.error(err);
@@ -361,7 +283,7 @@ export default {
             message: "Ups!...ocurrió un error :(",
             type: "error",
             position: "bottom",
-            duration: 3000,
+            duration: 5000,
           });
         });
 

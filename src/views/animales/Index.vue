@@ -76,10 +76,6 @@
 import axios from "@/axios"
 
 export default {
-    /*components: {
-        DataTable: () => import("../../components/DataTable")
-    },*/
-  
   data() {
     return {
       server: process.env.API_URL || 'http://localhost:3000',
@@ -142,6 +138,13 @@ export default {
           class: "thead-light",
         },
         {
+          text: "Asociación",
+          align: "center",
+          sortable: true,
+          value: "asociation",
+          class: "thead-light",
+        },
+        {
           text: "Acciones",
           align: "start",
           sortable: false,
@@ -153,12 +156,15 @@ export default {
   },
   created () {
 		this.getAnimals();
+    
 	},
   methods: {
+    
     getAnimals(){
       axios.get("animal")
 			.then(res => {
 				this.data = res.data
+        console.log("animales", this.data)
 			})
 			.catch(err => {
 				console.error(err); 

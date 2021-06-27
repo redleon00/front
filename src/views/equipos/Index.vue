@@ -30,12 +30,19 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12">
+      <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
+        <v-tab v-for="item in items" :key="item" @click="ir(item)">
+          {{ item }}
+        </v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="tab">
+        <!-- Para Ovinos -->
+        <v-tab-item>
+          <div class="col-md-12">
         <v-data-table
           :headers="headers"
-          :items="data"
+          :items="data1"
           loading
-          loading-text="Please wait"
           :search="search"
           :items-per-page="10"
           :page.sync="page"
@@ -43,6 +50,7 @@
           @page-count="pageCount = $event"
           class="border"
           id="table"
+          no-data-text="Sin datos"
         >
          <template v-slot:[`all_teams.owner`]="{ item }">
           
@@ -79,7 +87,7 @@
             <v-icon
               small
               class="ml-4"
-              @click="deleteItem(item)"
+              @click="deleteItem(item,1)"
             >
              fa fa-trash
             </v-icon>
@@ -87,6 +95,68 @@
         </template>
         </v-data-table>
       </div>
+        </v-tab-item>
+        <!-- Para Caprinos -->
+        <v-tab-item>
+          <div class="col-md-12">
+        <v-data-table
+          :headers="headers"
+          :items="data2"
+          :search="search"
+          :items-per-page="10"
+          :page.sync="page2"
+          hide-default-footer
+          @page-count="pageCount2 = $event"
+          class="border"
+          id="table"
+          no-data-text="Sin datos"
+        >
+         <template v-slot:[`all_teams.owner`]="{ item }">
+          
+            {{ item.all_teams.owner }}
+          
+        </template>
+        <template v-slot:[`item.owner`]="{ item }">
+          <v-icon
+            color="blue"
+            small
+          >
+          {{ item.owner }}
+          </v-icon>
+        
+        </template>
+        <template v-slot:[`item.breeder`]="{ item }">
+          <v-icon
+            color="blue"
+            small
+          >
+          {{ item.breeder }}
+          </v-icon>
+        
+        </template>
+        <template  v-slot:[`item.actions`]="{ item }">             
+            <v-icon
+              small
+              class="mr-4"
+              @click="editItem(item)"
+              color="red"
+            >
+              fa fa-edit
+            </v-icon>   
+            <v-icon
+              small
+              class="ml-4"
+              @click="deleteItem(item,2)"
+            >
+             fa fa-trash
+            </v-icon>
+            
+        </template>
+        </v-data-table>
+      </div>
+        </v-tab-item>      
+      </v-tabs-items>  
+      
     </div>
     <div class="row">
       <div class="col">
@@ -105,11 +175,17 @@ export default {
       title: "Equipos",
       isLoading: false,
       page: 1,
-      type: 0,
       pageCount: 0,
+      type: 0,
+      page2: 1,
+      pageCount2: 0,
       data: [],
       search: "",
       link:"/equipos/nuevo",
+      items: ["OVINOS", "CAPRINOS"],
+      tab: null,
+      data1:[],
+      data2:[],
       headers: [
         {
           text: "Participante",
@@ -139,13 +215,13 @@ export default {
           value: "all_teams.length",
           class: "thead-light",
         },
-        {
+        /*{
           text: "Asociación",
           align: "center",
           sortable: true,
           value: "asociacion",
           class: "thead-light",
-        },
+        },*/
         {
           text: "Acciones",
           align: "start",
@@ -165,14 +241,18 @@ export default {
       axios.get("teams")
 			.then(res => {
 				this.data = res.data
-        console.log("data", this.data)
+        this.data1 = res.data.filter((x) => x.animal_type == "OVINO");
+          
+        this.data2 = res.data.filter((x) => x.animal_type == "CAPRINO");
+          
+        //console.log("data", this.data)
 			})
 			.catch(err => {
 				console.error(err); 
 			})
 
     },
-    deleteItem (item) {
+    deleteItem (item, data) {
         let pos = this.data.indexOf(item)
         axios
           .post(`/teams/deleted/${item._id}`)
@@ -183,7 +263,12 @@ export default {
               position: "bottom",
               duration: 3000,
             });
-            this.data.splice(pos, 1)
+            if(data == 1){
+              this.data1.splice(pos, 1)
+            }else{
+              this.data2.splice(pos, 1)
+            }
+            
           } )
           .catch((err) => {
             console.error(err);
@@ -199,6 +284,9 @@ export default {
       editItem (item) {
         this.$router.push({ name: 'EditarEquipo', params: { item: item } })
       },
+      ir(item){
+        console.log("llego", item)
+      }
       
      
 }
