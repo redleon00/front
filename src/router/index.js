@@ -77,6 +77,17 @@ const routes = [
       name: 'EditarEquipo',
       component: () => import('../views/equipos/Editar.vue')
     },
+    //equipos de exhibicion
+    {
+      path: '/exhibicion/index',
+      name: 'ListadoEquiposEx',
+      component: () => import('../views/exhibicion/Index.vue')
+    },
+    {
+      path: '/exhibicion/nuevo',
+      name: 'NuevoEquiposEx',
+      component: () => import('../views/exhibicion/Nuevo.vue')
+    },
     //Competencias
     {
       path: '/competencia/categoria/',
@@ -118,6 +129,11 @@ const routes = [
       path: '/resultados/supremo/',
       name: 'ResultadosS',
       component: () => import('../views/resultados/Supremo.vue')
+    },
+    {
+      path: '/resultados/tablas/',
+      name: 'Tablas',
+      component: () => import('../views/resultados/Tablas.vue')
     },
     //Configuraciones
     {

@@ -10,7 +10,7 @@
         <div class="page-header text-center">
          
           <h1 class="display-3 ">
-            <strong> {{item.race+" "}}{{ item.category+" " }}{{item.sex == 'M' ? 'MACHO' : 'HEMBRA'}} </strong>
+            <strong> {{"CAMPEÓN SUPREMO"+" "}}{{item.sex == 'M' ? 'MACHO' : 'HEMBRA'}} </strong>
           </h1>
         
         </div>
@@ -23,55 +23,20 @@
           </div>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center" >
           <div class="col-md-4">
             <div class="box">
                 <div class="our-services settings">
-                    <div class="icon"> <img :src="require('@/assets/cintaB.png')" height="100%" width="110%"> </div>
-                    <h1 class="card-title h2">1er LUGAR</h1>
+                    <div class="icon"> <img :src="require('@/assets/azulE.png')" height="180px" width="150px"> </div>
+                    <h1 class="card-title h1">1er LUGAR</h1>
                     <p class="card-text h3 text-muted">Ejemplar:</p>
-                    <p class="card-text h2"><strong>{{item.firts_animal.name}}</strong></p>
+                    <p class="card-text h2 first"><strong>{{item.firts_animal.name}}</strong></p>
                     <p class="card-text h6"><strong>Expositor: </strong>{{item.firts_animal.team}}</p>
                     <p class="card-text h6"><strong>Criador: </strong>{{item.firts_animal.breeder}}</p>
                 </div>
             </div>
         </div>
         </div>
-        <div class="row">
-          <div class="col-4 ml-4">
-            
-              <div v-if="item.second_animal.name">
-                <div class="box">
-                <div class="our-services settings">
-                    <div class="icon"> <img :src="require('@/assets/cintaR.png')" height="85%" width="105%"> </div>
-                    <h1 class="card-title h2">2do LUGAR</h1>
-                    <p class="card-text h3 text-muted">Ejemplar:</p>
-                    <p class="card-text h2"><strong>{{item.second_animal.name}}</strong></p>
-                    <p class="card-text h6"><strong>Expositor: </strong>{{item.second_animal.team}}</p>
-                    <p class="card-text h6"><strong>Criador: </strong>{{item.second_animal.breeder}}</p>
-                </div>
-            </div>
-               </div>
-            
-          </div>
-          <v-col md="4" offset-md="4">
-           
-              <div v-if="item.third_animal.name">
-                <div class="box">
-                <div class="our-services settings">
-                    <div class="icon"> <img :src="require('@/assets/cintaA.png')" height="85%" width="95%"> </div>
-                    <h1 class="card-title h2">3er LUGAR</h1>
-                    <p class="card-text h3 text-muted">Ejemplar:</p>
-                    <p class="card-text h2"><strong>{{item.third_animal.name}}</strong></p>
-                    <p class="card-text h6"><strong>Expositor: </strong>{{item.third_animal.team}}</p>
-                    <p class="card-text h6"><strong>Criador: </strong>{{item.third_animal.breeder}}</p>
-                </div>
-            </div>
-              </div>
-            
-          </v-col>
-        </div>
-
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="red" text @click="close"> Cerrar </v-btn>
@@ -121,7 +86,7 @@ export default {
     };
   },
   created() {
-    console.log("animales que llegaron", this.toggled);
+    console.log("animales que llegaron", this.item);
   },
   methods: {
     close() {
@@ -138,9 +103,9 @@ export default {
     font-family: 'Ubuntu', sans-serif;
      position: absolute;
      -webkit-background-size: cover;
-  -moz-background-size: 50%;
-  -o-background-size: 50%;
-  background-size: 50%; 
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; 
   
      
 }
@@ -165,9 +130,10 @@ export default {
 }
 
 .our-services .icon {
-    margin-bottom: -50px;
-    transform: translateY(-50%);
-    text-align: center
+    margin-bottom: -140px;
+    transform: translateY(-35%);
+    text-align: right;
+    margin-left: 300px;
 }
 
 .our-services:hover h4,
@@ -210,4 +176,8 @@ export default {
     cursor: pointer;
     background-image: linear-gradient(-45deg, #27b88d 0%, #22dd73 100%)
 }
+.first{
+    font-size: 50px;
+}
 </style>
+

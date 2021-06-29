@@ -4,7 +4,7 @@
       <v-card-text>
         <v-form ref="form" @submit.prevent="submit">
           <v-row>
-            <v-col class="h3 font-weight-bold">Agregar Equipo</v-col>
+            <v-col class="h3 font-weight-bold">Agregar Equipo de Exhibición</v-col>
           </v-row>
           <v-divider></v-divider>
           <v-row>
@@ -36,25 +36,17 @@
 
             <v-col cols="12" md="3">
               <v-radio-group
-                v-model="form.animal_type"
+                v-model="form.type"
                 row
                 :rules="rules.required"
               >
                 <v-radio
-                  label="Ovino"
-                  value="OVINO"
+                  label="Exhibición"
+                  :value="form.type"
                   color="indigo"
                   class="form-control-sm"
-                  :disabled="team_save"
+                  disabled
                 ></v-radio>
-                <v-radio
-                  label="Caprino"
-                  value="CAPRINO"
-                  color="indigo"
-                  class="form-control-sm"
-                  :disabled="team_save"
-                ></v-radio>
-               
               </v-radio-group>
             </v-col>
           </v-row>
@@ -153,11 +145,13 @@
                           </v-menu>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field
+                          <v-select
                             v-model="form2.categoria"
                             label="Categoria"
-                            readonly
-                          ></v-text-field>
+                            :items="categorys"
+                            item-text="name"
+                            item-value="name"
+                          ></v-select>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                           <v-radio-group
@@ -183,7 +177,28 @@
                       <v-row>
                         
                         <v-col cols="12" md="4">
-                           <v-combobox
+                           <v-radio-group
+                            v-model="form2.animal_type"
+                            row
+                            :rules="rules.required"
+                            @change="change_races"
+                          >
+                            <v-radio
+                              label="Ovino"
+                              value="OVINO"
+                              color="indigo"
+                              class="form-control-sm"
+                            ></v-radio>
+                            <v-radio
+                              label="Caprino"
+                              value="CAPRINO"
+                              color="indigo"
+                              class="form-control-sm"
+                            ></v-radio>
+                          </v-radio-group>
+                        </v-col>
+                        <v-col cols="12" md="4">
+                         <v-combobox
                             v-model="form2.race"
                             label="Raza"
                             item-text="name"
@@ -194,6 +209,7 @@
                             required
                           ></v-combobox>
                         </v-col>
+
                         <v-col cols="12" md="4">
                          <v-combobox
                             v-model="form2.breeder"
@@ -204,11 +220,12 @@
                             class="form-control-sm"
                             :rules="rules.required"
                             required
-                          ></v-combobox>
+                          ></v-combobox>  
                         </v-col>
-
-                        <v-col cols="12" md="4">
-                           <v-select
+                      </v-row>
+                      <v-row justify="center">
+                          <v-col cols="12" md="4">
+                          <v-select
                               v-model="form2.asociation"
                               label="Asociación"
                               class="form-control-sm"
@@ -218,7 +235,7 @@
                               item-text="name"
                               item-value="name"
                             />
-                        </v-col>
+                            </v-col>
                       </v-row>
                       
                       <v-card-actions>
@@ -294,7 +311,7 @@
 </template> 
 <script>
 import axios from "@/axios";
-import moment from "moment";
+//import moment from "moment";
 export default {
   data() {
     return {
@@ -307,14 +324,13 @@ export default {
       form: {
         participant: "",
         name: "",
-        animal_type: "OVINO",
+        type: "EXHIBICION",
       },
       form2: {
         name: "",
         tatoo: "",
         register: "",
         categoria: "",
-        subcategoria: "",
         breeder: "",
         sex: "M",
         ID_team: '',
@@ -324,6 +340,7 @@ export default {
         race: '',
         asociation: '',
         group:'',
+        animal_type:'OVINO'
         
       },
       data: [],
@@ -343,7 +360,7 @@ export default {
       races: [],
       breeders: [],
       categorys: [],
-      activate: true,
+      activate: false,
       asociations:[], 
       message:'',   
       headers: [
@@ -414,7 +431,7 @@ export default {
     };
   },
   watch: {
-    date(val) {
+    /*date(val) {
       let birth = moment(val);
       let today = moment('2021-07-10');
       
@@ -442,7 +459,7 @@ export default {
           duration: 3000,
         });
       }
-    },
+    },*/
   },
   computed: {
     formTitle() {
@@ -483,7 +500,7 @@ export default {
     submit() {
       this.form.name = this.form.name.toUpperCase();
       axios
-        .post(`/teams/register`, this.form)
+        .post(`/teamsEx/register`, this.form)
         .then((res) => {
           this.$toast.open({
             message: res.data.message,
@@ -512,7 +529,7 @@ export default {
     },
     change_product() {
       this.form.participant = (typeof this.form.participant == "object") ? this.form.participant.name.toUpperCase() : this.form.participant.toUpperCase()
-      this.form.name = this.form.participant
+      this.form.name = this.form.participant+" EX"
     },
     getRaces() {
       axios
@@ -526,13 +543,14 @@ export default {
         });
     },
     change_races(){ 
-      this.races = this.allRaces.filter(x => x.tipo === this.form.animal_type)
+      this.races = this.allRaces.filter(x => x.tipo === this.form2.animal_type)
     },
     getCategory() {
       axios
         .get("category")
         .then((res) => {
-          this.categorys = res.data;
+            console.log("cat", res.data)
+          this.categorys = res.data.filter(x => x.exhibition == true);
         })
         .catch((err) => {
           console.error(err);
@@ -552,7 +570,7 @@ export default {
       this.form2.ID_team = this.t._id;
       this.form2.birthday = this.date;
       this.form2.team = this.t.name
-      this.form2.type = this.form.animal_type
+      //this.form2.type = this.form.animal_type
       this.form2.owner = this.t.participant
       let animal_per_race = this.animals.filter((x) => x.race == this.form2.race.name)
       let animal_per_team = this.animals.length
@@ -561,7 +579,7 @@ export default {
           
       if((animal_per_race.length < 4) && (animal_per_team < 10)){
         axios
-        .post(`/animal/register`, this.form2)
+        .post(`/animalEx/register`, this.form2)
         .then((res) => {
           this.$toast.open({
             message: res.data.message,
@@ -628,6 +646,7 @@ export default {
       this.form2.race = item.race
       this.form2.breeder = item.breeder
       this.form2.asociation = item.asociation
+      this.form2.animal_type = item.animal_type
       this.date = item.birthday.slice(0,10)
 
       
@@ -637,7 +656,7 @@ export default {
       this.form2.birthday = this.date;
       let pos = this.animals.indexOf(item)
       axios
-        .put(`/animal/update/${item._id}`, this.form2)
+        .put(`/animalEx/update/${item._id}`, this.form2)
         .then((res) => {
           this.$toast.open({
             message: res.data.message,
@@ -656,6 +675,7 @@ export default {
           this.animals[pos].birthday = this.form2.birthday
           this.animals[pos].breeder = this.form2.breeder.name
           this.animals[pos].sex = this.form2.sex
+          this.animals[pos].animal_type = this.form2.animal_type
           this.resetform2()
           this.dialog = false
            

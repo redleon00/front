@@ -9,6 +9,13 @@
       </div>
     </div>
     <div class="row justify-content-between">
+      <resultsr
+        :item="this.item"
+        :modal="this.open"
+        :title="this.title_card"
+        :toggled="this.toggled"
+        @closed="closed"
+      />
       <div class="col-md-2">
         <div data-app>
         </div>
@@ -46,6 +53,11 @@
               id="table"
               :key="componentKey"
             >
+            <template v-slot:[`item.actions`]="{ item }">
+                <v-icon small class="ml-4" @click="viewItem(item)">
+                   fa fa-eye 
+                </v-icon>
+              </template>
             </v-data-table>
             <div class="row">
               <div class="col">
@@ -71,7 +83,11 @@
               :key="componentKey"
               dense
             >
-              
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-icon small class="ml-4" @click="viewItem(item)">
+                   fa fa-eye 
+                </v-icon>
+              </template>
             </v-data-table>
             <div class="row">
               <div class="col">
@@ -86,9 +102,12 @@
 </template>
 <script>
 import axios from "@/axios";
+import resultsr from "@/components/ResultsR.vue"
 
 export default {
-
+ components: {
+    resultsr,
+  },
   data() {
     return {
       server: process.env.API_URL || "http://localhost:3000",
@@ -153,6 +172,13 @@ export default {
           value: "firts_animal.owner",
           class: "thead-light",
         },
+        {
+          text: "Acciones",
+          align: "start",
+          sortable: false,
+          class: "thead-light",
+          value: "actions",
+        },
       ],
     };
   },
@@ -183,7 +209,20 @@ export default {
         .catch((err) => {
           console.error(err);
         });
-      }
+      },
+      viewItem(item) {
+        console.log(item, "item")
+        
+        this.item = item;
+        this.open = true;
+        
+          this.toggled = true
+        
+      },
+       closed() {
+         this.toggled = false
+         this.open = false;
+    },
   }
 };
 </script>

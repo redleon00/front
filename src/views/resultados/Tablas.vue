@@ -9,11 +9,12 @@
       </div>
     </div>
     <div class="row justify-content-between">
-      <resultss
+      <resultsT
         :item="this.item"
         :modal="this.open"
         :title="this.title_card"
         :toggled="this.toggled"
+        :data="this.data"
         @closed="closed"
       />
       <div class="col-md-2">
@@ -53,9 +54,9 @@
               id="table"
               :key="componentKey"
             >
-             <template v-slot:[`item.actions`]="{ item }">
+            <template v-slot:[`item.actions`]="{ item }">
                 <v-icon small class="ml-4" @click="viewItem(item)">
-                   fa fa-eye 
+                  fa fa-eye
                 </v-icon>
               </template>
             </v-data-table>
@@ -75,17 +76,16 @@
               loading-text="Please wait"
               :search="search"
               :items-per-page="10"
-              :page.sync="page2"
+              :page.sync="page"
               hide-default-footer
-              @page-count="pageCount2 = $event"
-              class="border elevation-1"
+              @page-count="pageCount = $event"
+              class="border"
               id="table"
               :key="componentKey"
-              dense
             >
-               <template v-slot:[`item.actions`]="{ item }">
+            <template v-slot:[`item.actions`]="{ item }">
                 <v-icon small class="ml-4" @click="viewItem(item)">
-                   fa fa-eye 
+                  fa fa-eye
                 </v-icon>
               </template>
             </v-data-table>
@@ -102,73 +102,50 @@
 </template>
 <script>
 import axios from "@/axios";
-import resultss from "@/components/ResultsS.vue"
+import resultsT from "@/components/ResultsTable.vue"
 
 export default {
- components: {
-    resultss,
+  components: {
+    resultsT,
   },
 
   data() {
     return {
       server: process.env.API_URL || "http://localhost:3000",
-      title: "Resultado de Competencias por Razas",
+      title: "Resultados Varios",
       page: 1,
       pageCount: 0,
       page2: 1,
       pageCount2: 0,
-      data1: [],
-      data2: [],
+      data:[],
+      data1: [{name:"Expositores", animal_type:"OVINO", type:"E"},{name:"Criadores",animal_type:"OVINO", type:"C"},{name:"Asociaciones",animal_type:"OVINO", type:"A"}],
+      data2: [{name:"Expositores",animal_type:"CAPRINO", type:"E"},{name:"Criadores",animal_type:"CAPRINO", type:"C"},{name:"Asociaciones",animal_type:"CAPRINO", type:"A"}],
       search: "",
-      tipo: "Categoria",
       componentKey: 0,
       items: ["OVINOS", "CAPRINOS"],
       tab: null,
       open: false,
-      animals: [],
-      animalsSelect: [],
       item: {_id:''},
+      dataExpoOvi:[],
+      dataExpoCapri:[],
+      dataCriaOvi:[],
+      dataCriaCapri:[],
+      dataAsocOvi:[],
+      dataAsocCapri:[],
       title_card:'',
+      toggled: false,
       headers: [
         {
-          text: "Competencia",
+          text: "Tabla",
           align: "start",
           sortable: false,
-          value: "name_competencia",
-          class: "thead-light",
-        },
-        {
-          text: "Campeón",
-          align: "start",
-          sortable: false,
-          value: "firts_animal.name",
-          class: "thead-light",
-        },
-        {
-          text: "Raza",
-          align: "center",
-          sortable: true,
-          value: "firts_animal.race",
-          class: "thead-light",
-        },
-        {
-          text: "Expositor",
-          align: "center",
-          sortable: true,
-          value: "firts_animal.owner",
+          value: "name",
           class: "thead-light",
         },
         
         {
-          text: "Criador",
-          align: "center",
-          sortable: true,
-          value: "firts_animal.breeder",
-          class: "thead-light",
-        },
-         {
           text: "Acciones",
-          align: "start",
+          align: "center",
           sortable: false,
           class: "thead-light",
           value: "actions",
@@ -177,36 +154,69 @@ export default {
     };
   },
   created() {
-    this.getResults();
-   
+    this.getTableExpo()
+    this.getTableCria()
+    this.getTableAsoc()
+      
   },
 
   methods: {
-      getResults(){
-          axios
-        .get("results/resultSupreme")
-        .then((res) => {
-         this.data1 = res.data.filter((x) => x.type_animal == "OVINO");
-         
-          /*this.data1.forEach((x) => {
-            x.disabled = false;
-          });*/
-          this.data2 = res.data.filter((x) => x.type_animal == "CAPRINO");
-          /*this.data2.forEach((x) => {
-            x.disabled = false;
-          });*/
+      getTableExpo(){
+        axios.get("results/resultExpo")  
+        .then((res) => { 
+          console.log(res.data)
+          this.dataExpoOvi = res.data.dataExpoOvi;
+          this.dataExpoCapri = res.data.dataExpoCapri;
         })
         .catch((err) => {
           console.error(err);
         });
       },
-       viewItem(item) {
+      getTableCria(){
+        axios.get("results/resultCria")  
+        .then((res) => { 
+          console.log(res.data)
+          this.dataCriaOvi = res.data.dataCriaOvi;
+          this.dataCriaCapri = res.data.dataCriaCapri;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      },
+      getTableAsoc(){
+        axios.get("results/resultAsoc")  
+        .then((res) => { 
+          console.log(res.data)
+          this.dataAsocOvi = res.data.dataAsocOvi;
+          this.dataAsocCapri = res.data.dataAsocCapri;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      },
+      viewItem(item) {
         console.log(item, "item")
-        
+        if(item.animal_type == "OVINO"){
+          if(item.type == "E"){
+            this.data = this.dataExpoOvi
+          }else if(item.type == "C"){
+            this.data = this.dataCriaOvi
+          }else{
+            this.data = this.dataAsocOvi
+          }
+        }else{
+          if(item.type == "E"){
+            this.data = this.dataExpoCapri
+          }else if(item.type == "C"){
+            this.data = this.dataCriaCapri
+          }else{
+            this.data = this.dataAsocCapri
+          }
+        }
+        //this.data = 
         this.item = item;
         this.open = true;
-        
-          this.toggled = true
+        this.toggled = true
         
       },
        closed() {

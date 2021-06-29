@@ -67,6 +67,11 @@ export default {
               title: "Equipos",
               icon: "fa fa-sitemap",
             },
+            {
+              href: "/exhibicion/index",
+              title: "Equipos Exhibición",
+              icon: "fa fa-sitemap",
+            },
           ],
         },
         {
@@ -120,6 +125,10 @@ export default {
             {
               href: "/resultados/supremo",
               title: "Supremo"
+            },
+            {
+              href: "/resultados/tablas",
+              title: "Tablas"
             }
           ]
         },

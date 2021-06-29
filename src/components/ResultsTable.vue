@@ -9,8 +9,8 @@
       <v-card class="mx-auto bodys">
         <div class="page-header text-center">
          
-          <h1 class="display-3 ">
-            <strong> {{item.race+" "}}{{ item.group+" " }}{{item.sex == 'M' ? 'MACHO' : 'HEMBRA'}} </strong>
+          <h1 class="display-5 ">
+            <strong>Tabla de Posiciones de {{item.name+" - "}}{{item.animal_type+"S"}}  </strong>
           </h1>
         
         </div>
@@ -18,24 +18,31 @@
           <h1 >
             <strong> RESULTADOS </strong>
           </h1>
-          <div class="row align-center">
+          <!--<div class="row align-center">
             <div class="col-12"></div>
-          </div>
+          </div>-->
         </div>
 
         <div class="row justify-content-center" >
-          <div class="col-md-4">
-            <div class="box">
-                <div class="our-services settings">
-                    <div class="icon"> <img :src="require('@/assets/azulE.png')" height="180px" width="150px"> </div>
-                    <h1 class="card-title h1">1er LUGAR</h1>
-                    <p class="card-text h3 text-muted">Ejemplar:</p>
-                    <p class="card-text h2"><strong>{{item.firts_animal.name}}</strong></p>
-                    <p class="card-text h6"><strong>Expositor: </strong>{{item.firts_animal.team}}</p>
-                    <p class="card-text h6"><strong>Criador: </strong>{{item.firts_animal.breeder}}</p>
-                </div>
-            </div>
+          <div class="col-md-10">
+             <v-data-table
+              :headers="headers"
+              :items="data"
+              loading
+              :items-per-page="25"
+              :page.sync="page"
+              hide-default-footer
+              @page-count="pageCount = $event"
+              class="border settings"
+              id="table"
+            >
+             </v-data-table>
+          </div>
         </div>
+        <div class="row">
+          <div class="col">
+            <v-pagination v-model="page" :length="pageCount"></v-pagination>
+          </div>
         </div>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -52,6 +59,9 @@ export default {
     item: {
       type: Object,
     },
+    data: {
+      type: Array,
+    },
     modal: {
       type: Boolean,
       default: false,
@@ -62,26 +72,86 @@ export default {
     toggled: {
       type: Boolean,
     },
+   
   },
 
   data() {
     return {
-      cards: [
+      page:1,
+      pageCount:0,
+       headers: [
         {
-          title: "Pre-fab homes",
-          src: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
-          flex: 12,
+          text: "Equipo",
+          align: "start",
+          sortable: true,
+          value: "team",
+          class: "thead-light",
         },
         {
-          title: "Favorite road trips",
-          src: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
-          flex: 6,
+          text: "1eros Categoria",
+          align: "center",
+          sortable: false,
+          value: "primero_category",
+          class: "thead-light",
         },
         {
-          title: "Best airlines",
-          src: "https://cdn.vuetifyjs.com/images/cards/plane.jpg",
-          flex: 6,
+          text: "2dos Categoria",
+          align: "center",
+          sortable: false,
+          value: "segundo_category",
+          class: "thead-light",
         },
+        {
+          text: "3eros Categoria",
+          align: "center",
+          sortable: false,
+          value: "tercero_category",
+          class: "thead-light",
+        },
+        {
+          text: "Menor",
+          align: "center",
+          sortable: false,
+          value: "menor",
+          class: "thead-light",
+        },
+        {
+          text: "Joven",
+          align: "center",
+          sortable: false,
+          value: "joven",
+          class: "thead-light",
+        },
+        {
+          text: "Adultos",
+          align: "center",
+          sortable: false,
+          value: "adulto",
+          class: "thead-light",
+        },
+        {
+          text: "Raza",
+          align: "center",
+          sortable: false,
+          value: "raza",
+          class: "thead-light",
+        },
+        {
+          text: "Reservado",
+          align: "center",
+          sortable: false,
+          value: "reservado",
+          class: "thead-light",
+        },
+        {
+          text: "Total",
+          align: "center",
+          sortable: false,
+          value: "total",
+          class: "thead-light",
+        },
+        
+        
       ],
     };
   },
@@ -150,7 +220,7 @@ export default {
 .settings {
     box-shadow: 0 0 25px 0 rgba(200, 154, 3, 0.993);
     cursor: pointer;
-    background-image: linear-gradient(-45deg, #e4e4e4 0%, #ebcc67 100%)
+    background-image: linear-gradient(-45deg, #ffffff 0%, #f5ef9b 100%)
 }
 
 .privacy:hover {
@@ -175,6 +245,9 @@ export default {
     box-shadow: 0 0 25px 0 rgba(20, 27, 201, .05);
     cursor: pointer;
     background-image: linear-gradient(-45deg, #27b88d 0%, #22dd73 100%)
+}
+.first{
+    font-size: 50px;
 }
 </style>
 

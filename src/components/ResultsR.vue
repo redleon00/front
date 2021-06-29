@@ -10,7 +10,7 @@
         <div class="page-header text-center">
          
           <h1 class="display-3 ">
-            <strong> {{item.race+" "}}{{ item.category+" " }}{{item.sex == 'M' ? 'MACHO' : 'HEMBRA'}} </strong>
+            <strong>{{"CAMPEÓN"+" "}} {{item.type_animal+" "}}{{item.sex == 'M' ? 'MACHO' : 'HEMBRA'}} </strong>
           </h1>
         
         </div>
@@ -27,24 +27,27 @@
           <div class="col-md-4">
             <div class="box">
                 <div class="our-services settings">
-                    <div class="icon"> <img :src="require('@/assets/cintaB.png')" height="100%" width="110%"> </div>
-                    <h1 class="card-title h2">1er LUGAR</h1>
+                    <div class="icon"> <img :src="require('@/assets/tricolor.png')" height="100%" width="150px"> </div>
+                    <h1 class="card-title display-6">Campeón de Raza</h1>
                     <p class="card-text h3 text-muted">Ejemplar:</p>
-                    <p class="card-text h2"><strong>{{item.firts_animal.name}}</strong></p>
+                    <p class="card-text h1 first"><strong>{{item.firts_animal.name}}</strong></p>
                     <p class="card-text h6"><strong>Expositor: </strong>{{item.firts_animal.team}}</p>
                     <p class="card-text h6"><strong>Criador: </strong>{{item.firts_animal.breeder}}</p>
                 </div>
             </div>
         </div>
         </div>
-        <div class="row">
-          <div class="col-4 ml-4">
+        <div class="row justify-content-center">
+          <div class="col-md-4">
             
               <div v-if="item.second_animal.name">
                 <div class="box">
                 <div class="our-services settings">
-                    <div class="icon"> <img :src="require('@/assets/cintaR.png')" height="85%" width="105%"> </div>
-                    <h1 class="card-title h2">2do LUGAR</h1>
+                  <div class="row">
+                    <div class="icon2"> <img :src="require('@/assets/rojaE.png')" height="120px" width="180px"> </div>
+                  </div>
+                    
+                    <h1 class="card-title h2">Campeón Reservado</h1>
                     <p class="card-text h3 text-muted">Ejemplar:</p>
                     <p class="card-text h2"><strong>{{item.second_animal.name}}</strong></p>
                     <p class="card-text h6"><strong>Expositor: </strong>{{item.second_animal.team}}</p>
@@ -52,24 +55,7 @@
                 </div>
             </div>
                </div>
-            
           </div>
-          <v-col md="4" offset-md="4">
-           
-              <div v-if="item.third_animal.name">
-                <div class="box">
-                <div class="our-services settings">
-                    <div class="icon"> <img :src="require('@/assets/cintaA.png')" height="85%" width="95%"> </div>
-                    <h1 class="card-title h2">3er LUGAR</h1>
-                    <p class="card-text h3 text-muted">Ejemplar:</p>
-                    <p class="card-text h2"><strong>{{item.third_animal.name}}</strong></p>
-                    <p class="card-text h6"><strong>Expositor: </strong>{{item.third_animal.team}}</p>
-                    <p class="card-text h6"><strong>Criador: </strong>{{item.third_animal.breeder}}</p>
-                </div>
-            </div>
-              </div>
-            
-          </v-col>
         </div>
 
         <v-card-actions>
@@ -170,6 +156,18 @@ export default {
     text-align: center
 }
 
+.our-services .icon2 {
+    margin-bottom: -65px;
+    transform: translateY(-50%);
+    text-align: left;
+     margin-left: -100px;
+}
+.our-services .icon3 {
+    margin-bottom: -65px;
+    transform: translateY(-50%);
+    text-align: right;
+     margin-left: -100px;
+}
 .our-services:hover h4,
 .our-services:hover p {
     color: #fff
@@ -209,5 +207,8 @@ export default {
     box-shadow: 0 0 25px 0 rgba(20, 27, 201, .05);
     cursor: pointer;
     background-image: linear-gradient(-45deg, #27b88d 0%, #22dd73 100%)
+}
+.first{
+    font-size: 35px;
 }
 </style>
