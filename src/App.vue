@@ -94,15 +94,56 @@ export default {
             {
               href:'/competencia/supremo',
               title: 'Supremo'
+            }
+            
+          ]
+        },
+        {
+          href: "/competenciaEx",
+          title: "Exhibición",
+          icon: "fa fa-trophy", 
+          child:[
+            {
+              href:'/competenciaEx/raza',
+              title: 'Categorias de Exhibición'
+
             },
             {
-              href:'/competencia/ceba',
+              href:'/competenciaEx/ceba',
               title: 'Ovinos de Ceba'
             },
             {
-              href:'/competencia/lechera',
-              title: 'Cabras Lecheras'
+              href:'/competenciaEx/lechera',
+              title: 'Cabras Lecheras',
+              child:[
+                {
+                  href:'/competenciaEx/mestizas/category',
+                  title: 'Por Categorias'
+                },
+                {
+                  href:'/competenciaEx/mestizas/group',
+                  title: 'Por Grupo'
+                },
+                {
+                  href:'/competenciaEx/mestizas/race',
+                  title: 'Por Raza'
+                }
+              ]
             },
+            {
+              href:'/competenciaEx/ordeno_ubre',
+              title:'Ordeño-Mejor Ubre',
+              child:[
+                {
+                  href:'/competenciaEx/ordeno_ubre/mejor_ubre',
+                  title:'Mejor Ubre',
+                },
+                {
+                  href:'/competenciaEx/ordeno_ubre/ordeno',
+                  title:'Competencia de Ordeño',
+                }
+              ]
+            }
           ]
         },
         {
@@ -130,6 +171,48 @@ export default {
               href: "/resultados/tablas",
               title: "Tablas"
             }
+          ]
+        },
+        //resultados de exhibicion
+        {
+          href: "/resultadosEx",
+          title: "Resultados de Ex",
+          icon: "fa fa-chart-bar",
+          child:[
+            {
+              href: "/resultadosEx/raza",
+              title: "Cat. de Exhibición"
+            },
+            {
+              href: "/resultadosEx/ceba",
+              title: "Ovinos de Ceba"
+            },
+            {
+              href:'/resultadosEx/lechera',
+              title: 'Cabras Lecheras',
+              child:[
+                {
+                  href:'/resultadosEx/mestizas/category',
+                  title: 'Por Categorias'
+                },
+                {
+                  href:'/resultadosEx/mestizas/group',
+                  title: 'Por Grupo'
+                },
+                {
+                  href:'/resultadosEx/mestizas/race',
+                  title: 'Por Raza'
+                }
+              ]
+            },
+            {
+              href: "/resultadosEx/ubre",
+              title: "Mejor Ubre"
+            },
+            {
+              href: "/resultadosEx/ordeno",
+              title: "Ordeño"
+            },
           ]
         },
         {

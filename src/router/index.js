@@ -29,6 +29,21 @@ const routes = [
       name: 'Home4',
       component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
     },
+    {
+      path: '/competenciaEx',
+      name: 'Home5',
+      component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
+    },
+    {
+      path: '/resultadosEx',
+      name: 'Home6',
+      component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
+    },
+    {
+      path: '/competenciaEx/lechera',
+      name: 'Home7',
+      component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
+    },
     //Participantes
     {
       path: '/participantes/index',
@@ -88,6 +103,16 @@ const routes = [
       name: 'NuevoEquiposEx',
       component: () => import('../views/exhibicion/Nuevo.vue')
     },
+    {
+      path: '/exhibicion/editar/:item',
+      name: 'EditarEquipoEx',
+      component: () => import('../views/exhibicion/Editar.vue')
+    },
+    {
+      path: '/competenciaEx/ordeno_ubre',
+      name: 'ListadoExOrdeño',
+      component: () => import('../views/exhibicion/Ordeño.vue')
+    },
     //Competencias
     {
       path: '/competencia/categoria/',
@@ -108,6 +133,42 @@ const routes = [
       path: '/competencia/supremo/',
       name: 'CompetenciaSupremo',
       component: () => import('../views/competencia/Supremo.vue')
+    },
+    //competencias de exhibicion
+    {
+      path: '/competenciaex/raza/',
+      name: 'CompetenciaExRaza',
+      component: () => import('../views/competenciaex/Raza.vue')
+    },
+    {
+      path: '/competenciaEx/ceba',
+      name: 'CompetenciaExCeba',
+      component: () => import('../views/competenciaex/Ceba.vue')
+    },
+    {
+      path: '/competenciaEx/mestizas/category',
+      name: 'CompetenciaExMestizas',
+      component: () => import('../views/competenciaex/mestizas/Categoria.vue')
+    },
+    {
+      path: '/competenciaEx/mestizas/group',
+      name: 'CompetenciaExMestizasG',
+      component: () => import('../views/competenciaex/mestizas/Grupo.vue')
+    },
+    {
+      path: '/competenciaEx/mestizas/race',
+      name: 'CompetenciaExMestizasR',
+      component: () => import('../views/competenciaex/mestizas/Raza.vue')
+    },
+    {
+      path:'/competenciaEx/ordeno_ubre/mejor_ubre',
+      name: 'CompetenciaUbre',
+      component: () => import('../views/competenciaex/Ubre.vue')
+    },
+    {
+      path:'/competenciaEx/ordeno_ubre/ordeno',
+      name: 'CompetenciaOrdeno',
+      component: () => import('../views/competenciaex/Ordeno.vue')
     },
     //resultados
     {
@@ -134,6 +195,42 @@ const routes = [
       path: '/resultados/tablas/',
       name: 'Tablas',
       component: () => import('../views/resultados/Tablas.vue')
+    },
+    //resultados de exhibicion
+    {
+      path: '/resultadosEx/raza',
+      name: 'ResultadoREX',
+      component: () => import('../views/resultsEx/Raza.vue')
+    },
+    {
+      path: '/resultadosEx/ceba',
+      name: 'ResultadoCeba',
+      component: () => import('../views/resultsEx/Ceba.vue')
+    },
+    {
+      path: '/resultadosEx/mestizas/category',
+      name: 'ResultadosMestizasCat',
+      component: () => import('../views/resultsEx/mestizas/Categoria.vue')
+    },
+    {
+      path: '/resultadosEx/mestizas/group',
+      name: 'ResultadosMestizasG',
+      component: () => import('../views/resultsEx/mestizas/Grupo.vue')
+    },
+    {
+      path: '/resultadosEx/mestizas/race',
+      name: 'ResultadosMestizasR',
+      component: () => import('../views/resultsEx/mestizas/Raza.vue')
+    },
+    {
+      path: '/resultadosEx/ubre',
+      name: 'ResultadoUbre',
+      component: () => import('../views/resultsEx/Ubre.vue')
+    },
+    {
+      path: '/resultadosEx/ordeno',
+      name: 'ResultadoOrdeno',
+      component: () => import('../views/resultsEx/Ordeno.vue')
     },
     //Configuraciones
     {

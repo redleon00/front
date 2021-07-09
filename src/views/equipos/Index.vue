@@ -42,7 +42,6 @@
         <v-data-table
           :headers="headers"
           :items="data1"
-          loading
           :search="search"
           :items-per-page="10"
           :page.sync="page"
@@ -94,6 +93,11 @@
             
         </template>
         </v-data-table>
+         <div class="row">
+              <div class="col">
+                <v-pagination v-model="page" :length="pageCount"></v-pagination>
+              </div>
+            </div>
       </div>
         </v-tab-item>
         <!-- Para Caprinos -->
@@ -153,6 +157,11 @@
             
         </template>
         </v-data-table>
+         <div class="row">
+              <div class="col">
+                <v-pagination v-model="page2" :length="pageCount2"></v-pagination>
+              </div>
+          </div>
       </div>
         </v-tab-item>      
       </v-tabs-items>  
@@ -160,7 +169,7 @@
     </div>
     <div class="row">
       <div class="col">
-        <v-pagination v-model="page" :length="pageCount"></v-pagination>
+        <v-pagination v-model="page2" :length="pageCount2"></v-pagination>
       </div>
     </div>
   </div>
@@ -253,8 +262,18 @@ export default {
 
     },
     deleteItem (item, data) {
-        let pos = this.data.indexOf(item)
-        axios
+       this.$swal.fire({
+        title: 'Está seguro de Eliminar este equipo?',
+        showCancelButton: true,
+        cancelButtonText: 'No',
+        confirmButtonText: `Sí`,
+        customClass: {
+          cancelButton: 'order-1 right-gap',
+          confirmButton: 'order-2',
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios
           .post(`/teams/deleted/${item._id}`)
           .then( res => {
             this.$toast.open({
@@ -264,8 +283,10 @@ export default {
               duration: 3000,
             });
             if(data == 1){
+              let pos = this.data1.indexOf(item)
               this.data1.splice(pos, 1)
             }else{
+              let pos = this.data2.indexOf(item)
               this.data2.splice(pos, 1)
             }
             
@@ -279,6 +300,11 @@ export default {
               duration: 3000,
             });
           })
+        }else if (result.isDenied){
+            //algo
+        }
+      })
+        
         
       },
       editItem (item) {

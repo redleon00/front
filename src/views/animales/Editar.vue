@@ -176,6 +176,7 @@ export default {
         asociation: "",
         group:""
       },
+      asociations:[],
       races: [],
       categorys: [],
       participants: [],
@@ -185,7 +186,6 @@ export default {
       breeders: [],
       date:new Date().toISOString().substr(0, 10),
       menu2: false,
-      asociations:['AVCO', 'ASOOVINOS', 'ASOCABRA', 'CAVIDOC','OTRO'],    
     };
   },
   created() {
@@ -193,6 +193,7 @@ export default {
     this.getRaces();
     this.getCategory();
     this.getTeam();
+    this.getAsoc();
     this.animalData = this.$router.history.current.params.item;
     this.id = this.animalData._id;
     this.form.register = this.animalData.register;
@@ -240,6 +241,17 @@ export default {
     },
   },
   methods: {
+    getAsoc() {
+        axios
+          .get("asociations")
+          .then((res) => {
+            //console.log(res)
+            this.asociations = res.data;
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      },
     submit() {
      this.form.birthday = this.date;
       if (this.form.team.toUpperCase() !== this.animalData.team.toUpperCase()) {

@@ -19,16 +19,7 @@
         @saved="save"
       />
       <div class="col-md-2">
-        <div data-app>
-          <!--<v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-            <v-btn class="mx-2" fab small dark v-bind="attrs" v-on="on" @click="makeCompe">
-              <v-icon dark> fa fa-plus </v-icon>
-            </v-btn>
-          </template>
-            <span>Generar Competencias</span>
-          </v-tooltip>-->
-        </div>
+        <div data-app></div>
       </div>
       <div class="col-md-4">
         <input
@@ -53,6 +44,7 @@
               :headers="headers"
               :items="data1"
               loading
+              loading-text="Please wait"
               :search="search"
               :items-per-page="10"
               :page.sync="page"
@@ -90,6 +82,7 @@
               :headers="headers"
               :items="data2"
               loading
+              loading-text="Please wait"
               :search="search"
               :items-per-page="10"
               :page.sync="page2"
@@ -103,7 +96,6 @@
                 <v-icon
                   small
                   class="mr-4"
-                  color="red"
                   @click="editItem(item)"
                   :disabled="!item.status"
                 >
@@ -117,7 +109,10 @@
             </v-data-table>
             <div class="row">
               <div class="col">
-                <v-pagination v-model="page2" :length="pageCount2"></v-pagination>
+                <v-pagination
+                  v-model="page2"
+                  :length="pageCount2"
+                ></v-pagination>
               </div>
             </div>
           </div>
@@ -136,7 +131,7 @@ export default {
   data() {
     return {
       server: process.env.API_URL || "http://localhost:3000",
-      title: "Competencias por Categorias",
+      title: "Competencias de Exhibición",
       page: 1,
       pageCount: 0,
       page2: 1,
@@ -151,9 +146,9 @@ export default {
       open: false,
       animals: [],
       animalsSelect: [],
-      item: {_id:''},
-      title_card:'',
-      inputs:[true, true, true],
+      item: { _id: "" },
+      title_card: "",
+      inputs: [true, true, true],
       headers: [
         {
           text: "Nombre",
@@ -170,20 +165,6 @@ export default {
           class: "thead-light",
         },
         {
-          text: "Raza",
-          align: "start",
-          sortable: true,
-          value: "race",
-          class: "thead-light",
-        },
-        {
-          text: "Categoria",
-          align: "start",
-          sortable: true,
-          value: "category",
-          class: "thead-light",
-        },
-        {
           text: "Sexo",
           align: "start",
           sortable: true,
@@ -191,15 +172,15 @@ export default {
           class: "thead-light",
         },
         {
-          text: "Nº de Participantes",
+          text: "Categoria",
           align: "center",
           sortable: false,
-          value: "participantes",
+          value: "category",
           class: "thead-light",
         },
         {
           text: "Acciones",
-          align: "center",
+          align: "start",
           sortable: false,
           class: "thead-light",
           value: "actions",
@@ -207,7 +188,7 @@ export default {
       ],
     };
   },
-  created() {
+  mounted() {
     this.getCompe();
     this.getAnimals();
   },
@@ -215,23 +196,20 @@ export default {
   methods: {
     getCompe() {
       axios
-        .get(`competitions/listCategoria/`)
+        .get(`competitionsEx/listCompRace/`)
         .then((res) => {
-          
+          console.log(res.data);
           this.data1 = res.data.filter((x) => x.type_animal == "OVINO");
           this.data1.forEach((x) => {
             x.disabled = false;
-            x.participantes = x.animals_comp.length
+            //x.participantes = x.animals_comp.length
           });
-          this.data1 = this.data1.filter((x) => (typeof x.category != "undefined"))
 
           this.data2 = res.data.filter((x) => x.type_animal == "CAPRINO");
-          console.log("data", this.data2)
           this.data2.forEach((x) => {
-            x.participantes = x.animals_comp.length
             x.disabled = false;
+            //x.participantes = x.animals_comp.length
           });
-          this.data2 = this.data2.filter((x) => (typeof x.category != "undefined"))
         })
         .catch((err) => {
           console.error(err);
@@ -239,19 +217,20 @@ export default {
     },
     getAnimals() {
       axios
-        .get("animal")
+        .get("animalEx")
         .then((res) => {
           this.animals = res.data;
+          console.log("animales", this.animals);
         })
         .catch((err) => {
           console.error(err);
         });
     },
     editItem(item) {
-      console.log("el animals", item);
+      console.log("item", item)
+      
       let fil = {
         sex: item.sex,
-        race: item.race,
         category: item.category,
         type: item.type_animal,
       };
@@ -261,14 +240,16 @@ export default {
         }
         return true;
       });
-
       select.forEach(function(x){
         x.showname = x.tatoo+'-'+x.name
       })
-      console.log("el datpos", select);
+      /*select = select.map((element) => {
+        return element.firts_animal;
+      });*/
       this.animalsSelect = select;
-      let sex_word = (item.sex == 'M') ? 'MACHOS' : 'HEMBRAS'
-      this.title_card = "CATEGORIA: "+item.category+"    RAZA:     "+item.race+"  SEXO:   "+sex_word
+      console.log("el animalSelect", this.animalsSelect);
+      let sex_word = item.sex == "M" ? "MACHOS" : "HEMBRAS";
+      this.title_card = "CATEGORIA: " + item.category + "  SEXO:   " + sex_word;
       this.item = item;
       this.open = true;
     },
@@ -276,51 +257,52 @@ export default {
       this.open = false;
     },
     save(form) {
-      console.log("llego al save de category", form.first._id, form.second._id,(form.first._id === form.second._id),(form.first._id === form.third._id),
-        (form.second._id === form.third._id));
+      console.log("llego al save de grupos", form);
       let data = {};
-      
       data.id_competencia = this.item._id;
       data.name_competencia = this.item.name;
       data.category = this.item.category;
-      data.group = this.item.group;
       data.sex = this.item.sex;
-      data.race = this.item.race;
       data.firts_animal = form.first;
-      data.second_animal = form.second;
-      data.third_animal = form.third;
       data.pts_first = this.item.pts_first;
+      data.second_animal = form.second;
       data.pts_second = this.item.pts_second;
+      data.third_animal = form.third;
       data.pts_third = this.item.pts_third;
       data.type_animal = this.item.type_animal;
-      this.$swal.fire({
-        title: 'Está seguro de guardar estos resultados?',
-        showCancelButton: true,
-        cancelButtonText: 'No',
-        confirmButtonText: `Sí`,
-        customClass: {
-          cancelButton: 'order-1 right-gap',
-          confirmButton: 'order-2',
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-           axios
-              .post("/competitions/saveCategoryC", data)
+      this.$swal
+        .fire({
+          title: "Está seguro de guardar estos resultados?",
+          showCancelButton: true,
+          cancelButtonText: "No",
+          confirmButtonText: `Sí`,
+          customClass: {
+            cancelButton: "order-1 right-gap",
+            confirmButton: "order-2",
+          },
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            axios
+              .post("/competitionsEx/saveGroupR", data)
               .then((res) => {
                 this.$toast.open({
                   message: res.data.message,
                   type: "success",
                   position: "bottom",
-                  duration: 3000,
+                  duration: 5000,
                 });
-                let pos = (this.item.type_animal == "OVINO") ? this.data1.indexOf(this.item) : this.data2.indexOf(this.item);
-                
+
+                let pos =
+                  this.item.type_animal == "OVINO"
+                    ? this.data1.indexOf(this.item)
+                    : this.data2.indexOf(this.item);
+
                 if (this.item.type_animal == "OVINO") {
-                  this.data1[pos].status = false;  
+                  this.data1[pos].status = false;
                 } else {
-                  this.data2[pos].status = false;  
+                  this.data2[pos].status = false;
                 }
-                
                 this.open = false;
               })
               .catch((err) => {
@@ -331,12 +313,9 @@ export default {
                   position: "bottom",
                   duration: 5000,
                 });
-              });  
-        } else if (result.isDenied) {
-          //this.$swal.fire('Changes are not saved', '', 'info')
-        }
-      })
-     
+              });
+          }
+        });
     },
   },
 };

@@ -223,7 +223,6 @@ export default {
       console.log("el animals", this.animals, item);
       let fil = {
         sex: item.sex,
-        race: item.race,
         group: item.group,
         type_animal: item.type_animal,
       };
@@ -233,6 +232,9 @@ export default {
         }
         return true;
       });
+      select.forEach(function(x){
+        x.showname = x.tatoo+'-'+x.name
+      })
       select = select.map((element) => {
         return element.firts_animal;
       });
@@ -257,33 +259,47 @@ export default {
       data.firts_animal = form.first;
       data.pts_first = this.item.pts_first;
       data.type_animal = this.item.type_animal;
-      axios
-        .post("/competitions/saveGroupC", data)
-        .then((res) => {
-          this.$toast.open({
-            message: res.data.message,
-            type: "success",
-            position: "bottom",
-            duration: 5000,
-          });
-          let pos = (this.item.type_animal == "OVINO") ? this.data1.indexOf(this.item) : this.data2.indexOf(this.item);
-          
-          if (this.item.type_animal == "OVINO") {
-            this.data1[pos].status = false;  
-          } else {
-            this.data2[pos].status = false;  
-          }
-          this.open = false;
-        })
-        .catch((err) => {
-          console.log(err);
-          this.$toast.open({
-            message: "Ups!...ocurrió un error :(",
-            type: "error",
-            position: "bottom",
-            duration: 5000,
-          });
-        });
+       this.$swal.fire({
+        title: 'Está seguro de guardar estos resultados?',
+        showCancelButton: true,
+        cancelButtonText: 'No',
+        confirmButtonText: `Sí`,
+        customClass: {
+          cancelButton: 'order-1 right-gap',
+          confirmButton: 'order-2',
+        }
+      }).then((result) => {
+         if (result.isConfirmed) {
+            axios
+              .post("/competitions/saveGroupC", data)
+              .then((res) => {
+                this.$toast.open({
+                  message: res.data.message,
+                  type: "success",
+                  position: "bottom",
+                  duration: 5000,
+                });
+                let pos = (this.item.type_animal == "OVINO") ? this.data1.indexOf(this.item) : this.data2.indexOf(this.item);
+                
+                if (this.item.type_animal == "OVINO") {
+                  this.data1[pos].status = false;  
+                } else {
+                  this.data2[pos].status = false;  
+                }
+                this.open = false;
+              })
+              .catch((err) => {
+                console.log(err);
+                this.$toast.open({
+                  message: "Ups!...ocurrió un error :(",
+                  type: "error",
+                  position: "bottom",
+                  duration: 5000,
+                });
+              });
+         }
+      })
+      
     },
   },
 };

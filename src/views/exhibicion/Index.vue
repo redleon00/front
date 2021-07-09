@@ -1,22 +1,32 @@
 <template>
   <div class="container">
     <div class="page-header">
-      <h3 class="page-title"><strong> {{ title }} </strong></h3>
+      <h3 class="page-title">
+        <strong> {{ title }} </strong>
+      </h3>
       <div class="row align-center">
         <div class="col-12"></div>
       </div>
     </div>
     <div class="row justify-content-between">
       <div class="col-md-2">
-       <div data-app>   
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn class="mx-2" fab small dark v-bind="attrs" v-on="on" :to="link">
-              <v-icon dark> fa fa-plus </v-icon>
-            </v-btn>
-          </template>
-          <span>Agregar Nuevo</span>
-        </v-tooltip>
+        <div data-app>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="mx-2"
+                fab
+                small
+                dark
+                v-bind="attrs"
+                v-on="on"
+                :to="link"
+              >
+                <v-icon dark> fa fa-plus </v-icon>
+              </v-btn>
+            </template>
+            <span>Agregar Nuevo</span>
+          </v-tooltip>
         </div>
       </div>
       <div class="col-md-4">
@@ -30,75 +40,107 @@
       </div>
     </div>
     <div class="row">
+      <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
+        <v-tab v-for="item in items" :key="item" @click="ir(item)">
+          {{ item }}
+        </v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="tab">
+        <!-- Para Ovinos -->
+        <v-tab-item>
           <div class="col-md-12">
-        <v-data-table
-          :headers="headers"
-          :items="data"
-          :search="search"
-          :items-per-page="10"
-          :page.sync="page"
-          hide-default-footer
-          @page-count="pageCount = $event"
-          class="border"
-          id="table"
-          no-data-text="Sin datos"
-        >
-         <template v-slot:[`all_teams.owner`]="{ item }">
-          
-            {{ item.all_teams.owner }}
-          
-        </template>
-        <template v-slot:[`item.owner`]="{ item }">
-          <v-icon
-            color="blue"
-            small
-          >
-          {{ item.owner }}
-          </v-icon>
-        
-        </template>
-        <template v-slot:[`item.breeder`]="{ item }">
-          <v-icon
-            color="blue"
-            small
-          >
-          {{ item.breeder }}
-          </v-icon>
-        
-        </template>
-        <template  v-slot:[`item.actions`]="{ item }">             
-            <v-icon
-              small
-              class="mr-4"
-              @click="editItem(item)"
-              color="red"
+            <v-data-table
+              :headers="headers"
+              :items="data1"
+              :search="search"
+              :items-per-page="10"
+              :page.sync="page"
+              hide-default-footer
+              @page-count="pageCount = $event"
+              class="border"
+              id="table"
+              no-data-text="Sin datos"
             >
-              fa fa-edit
-            </v-icon>   
-            <v-icon
-              small
-              class="ml-4"
-              @click="deleteItem(item,1)"
+              <template v-slot:[`all_teams.owner`]="{ item }">
+                {{ item.all_teams.owner }}
+              </template>
+              <template v-slot:[`item.owner`]="{ item }">
+                <v-icon color="blue" small>
+                  {{ item.owner }}
+                </v-icon>
+              </template>
+              <template v-slot:[`item.breeder`]="{ item }">
+                <v-icon color="blue" small>
+                  {{ item.breeder }}
+                </v-icon>
+              </template>
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-icon small class="mr-4" @click="editItem(item)" color="red">
+                  fa fa-edit
+                </v-icon>
+                <v-icon small class="ml-4" @click="deleteItem(item, 1)">
+                  fa fa-trash
+                </v-icon>
+              </template>
+            </v-data-table>
+            <div class="row">
+              <div class="col">
+                <v-pagination v-model="page" :length="pageCount"></v-pagination>
+              </div>
+            </div>
+          </div>
+        </v-tab-item>
+        <!-- Para Caprinos -->
+        <v-tab-item>
+          <div class="col-md-12">
+            <v-data-table
+              :headers="headers"
+              :items="data2"
+              :search="search"
+              :items-per-page="10"
+              :page.sync="page2"
+              hide-default-footer
+              @page-count="pageCount2 = $event"
+              class="border"
+              id="table"
+              no-data-text="Sin datos"
             >
-             fa fa-trash
-            </v-icon>
-            
-        </template>
-        </v-data-table>
-      </div>   
-    </div>
-    <div class="row">
-      <div class="col">
-        <v-pagination v-model="page" :length="pageCount"></v-pagination>
-      </div>
+              <template v-slot:[`all_teams.owner`]="{ item }">
+                {{ item.all_teams.owner }}
+              </template>
+              <template v-slot:[`item.owner`]="{ item }">
+                <v-icon color="blue" small>
+                  {{ item.owner }}
+                </v-icon>
+              </template>
+              <template v-slot:[`item.breeder`]="{ item }">
+                <v-icon color="blue" small>
+                  {{ item.breeder }}
+                </v-icon>
+              </template>
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-icon small class="mr-4" @click="editItem(item)" color="red">
+                  fa fa-edit
+                </v-icon>
+                <v-icon small class="ml-4" @click="deleteItem(item, 2)">
+                  fa fa-trash
+                </v-icon>
+              </template>
+            </v-data-table>
+            <div class="row">
+            <div class="col">
+              <v-pagination v-model="page2" :length="pageCount2"></v-pagination>
+            </div>
+          </div>
+          </div>
+        </v-tab-item>
+      </v-tabs-items>
     </div>
   </div>
-  
 </template>
 <script>
-import axios from "@/axios"
+import axios from "@/axios";
 export default {
-   
   data() {
     return {
       title: "Equipos de Exhibición",
@@ -106,9 +148,15 @@ export default {
       page: 1,
       pageCount: 0,
       type: 0,
+      page2: 1,
+      pageCount2: 0,
       data: [],
       search: "",
-      link:"/exhibicion/nuevo",
+      link: "/exhibicion/nuevo",
+      items: ["OVINOS", "CAPRINOS"],
+      tab: null,
+      data1: [],
+      data2: [],
       headers: [
         {
           text: "Participante",
@@ -128,7 +176,7 @@ export default {
           text: "Especie",
           align: "center",
           sortable: true,
-          value: "animal_type",
+          value: "type",
           class: "thead-light",
         },
         {
@@ -152,62 +200,79 @@ export default {
           value: "actions",
           class: "thead-light",
         },
-
       ],
     };
   },
-  created () {
-		this.getTeams();
-	},
+  created() {
+    this.getTeams();
+  },
   methods: {
-    getTeams(){
-      axios.get("teamsEx")
-			.then(res => {
-				this.data = res.data
+    getTeams() {
+      axios
+        .get("teamsEx")
+        .then((res) => {
+          this.data = res.data;
 
-			})
-			.catch(err => {
-				console.error(err); 
-			})
+          this.data1 = res.data.filter((x) => x.type == "OVINO");
 
+          this.data2 = res.data.filter((x) => x.type == "CAPRINO");
+
+          //console.log("data", this.data)
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
-    deleteItem (item, data) {
-        let pos = this.data.indexOf(item)
-        axios
-          .post(`/teams/deleted/${item._id}`)
-          .then( res => {
-            this.$toast.open({
-              message: res.data.message,
-              type: "warning",
-              position: "bottom",
-              duration: 3000,
-            });
-            if(data == 1){
-              this.data1.splice(pos, 1)
-            }else{
-              this.data2.splice(pos, 1)
-            }
-            
-          } )
-          .catch((err) => {
-            console.error(err);
-            this.$toast.open({
-              message: "Ups!...ocurrió un error :(",
-              type: "error",
-              position: "bottom",
-              duration: 3000,
-            });
-          })
-        
-      },
-      editItem (item) {
-        this.$router.push({ name: 'EditarEquipo', params: { item: item } })
-      },
-      ir(item){
-        console.log("llego", item)
-      }
-      
-     
-}
-}
+    deleteItem(item, data) {
+      this.$swal
+        .fire({
+          title: "Está seguro de Eliminar este equipo?",
+          showCancelButton: true,
+          cancelButtonText: "No",
+          confirmButtonText: `Sí`,
+          customClass: {
+            cancelButton: "order-1 right-gap",
+            confirmButton: "order-2",
+          },
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            let pos = this.data.indexOf(item);
+            axios
+              .post(`/teamsEx/deleted/${item._id}`)
+              .then((res) => {
+                this.$toast.open({
+                  message: res.data.message,
+                  type: "warning",
+                  position: "bottom",
+                  duration: 3000,
+                });
+                if (data == 1) {
+                  this.data1.splice(pos, 1);
+                } else {
+                  this.data2.splice(pos, 1);
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+                this.$toast.open({
+                  message: "Ups!...ocurrió un error :(",
+                  type: "error",
+                  position: "bottom",
+                  duration: 3000,
+                });
+              });
+          } else if (result.isDenied) {
+            //algo
+          }
+        });
+    },
+    editItem(item) {
+      this.$router.push({ name: "EditarEquipoEx", params: { item: item } });
+    },
+    ir(item) {
+      console.log("llego", item);
+    },
+  },
+};
 </script>

@@ -51,6 +51,12 @@
                           class="form-control-sm"
                         ></v-radio>
                       </v-radio-group>
+                      <v-checkbox
+                        v-model="form.clase"
+                        label="Exhibición"
+                        color="red"
+                        hide-details
+                      ></v-checkbox>
                       </v-form>
                     </v-col>
                     <v-col cols="12" sm="<template>6" md="4"> </v-col>
@@ -145,7 +151,8 @@ export default {
       editedIndex: -1,
       form:{
         name: '',
-        tp: 'CAPRINO'
+        tp: 'CAPRINO',
+        clase: false
       },
       headers: [
         {
@@ -195,6 +202,7 @@ export default {
     },
     close () {
         this.form.name = ''
+        this.form.clase = false
         this.dialog = false
         this.editedIndex = -1
        
@@ -204,6 +212,7 @@ export default {
       this.editedIndex = this.data.indexOf(item)
       this.dialog = true
       this.form.name = item.name
+      this.form.clase = item.clase
     },
       checkName(val){
         this.disabled = (val.length > 0) ? false : true
@@ -248,6 +257,7 @@ export default {
             
             this.data[pos].name = this.form.name.toUpperCase()
             this.data[pos].tipo = this.form.tp
+            //this.data[pos].clase = this.form.clase
             this.form.name = ''
             this.dialog = false
             this.editedIndex = -1
@@ -267,6 +277,7 @@ export default {
       if (this.editedIndex > -1) {
         this.updateItem(this.data[this.editedIndex])
       }else{
+        console.log(this.form)
         axios
         .post(`/race/register`, this.form)
         .then((res) => {

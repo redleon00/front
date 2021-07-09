@@ -1,4 +1,4 @@
-FROM node:alpine as build-stage
+FROM node:latest as build-stage
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN npm install
 
 COPY [".", "/app/"] 
 
-RUN npm run build
+# RUN npm run build
 
 FROM nginx:alpine as production-stage
 

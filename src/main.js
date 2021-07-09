@@ -7,10 +7,15 @@ import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import moment from 'moment';
 import 'vuetify/dist/vuetify.min.css'
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import JsonExcel from "vue-json-excel";
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 Vue.config.productionTip = false
 Vue.use(VueToast);
+Vue.use(VueSweetalert2);
+Vue.component("downloadExcel", JsonExcel);
 new Vue({
   router,
   vuetify,

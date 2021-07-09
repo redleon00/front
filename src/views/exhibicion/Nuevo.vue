@@ -4,7 +4,7 @@
       <v-card-text>
         <v-form ref="form" @submit.prevent="submit">
           <v-row>
-            <v-col class="h3 font-weight-bold">Agregar Equipo de Exhibición</v-col>
+            <v-col class="h3 font-weight-bold">Agregar Equipo</v-col>
           </v-row>
           <v-divider></v-divider>
           <v-row>
@@ -36,16 +36,23 @@
 
             <v-col cols="12" md="3">
               <v-radio-group
-                v-model="form.type"
+                v-model="form.animal_type"
                 row
                 :rules="rules.required"
               >
                 <v-radio
-                  label="Exhibición"
-                  :value="form.type"
+                  label="Ovino"
+                  value="OVINO"
                   color="indigo"
                   class="form-control-sm"
-                  disabled
+                  :disabled="team_save"
+                ></v-radio>
+                <v-radio
+                  label="Caprino"
+                  value="CAPRINO"
+                  color="indigo"
+                  class="form-control-sm"
+                  :disabled="team_save"
                 ></v-radio>
               </v-radio-group>
             </v-col>
@@ -90,8 +97,12 @@
                     <span class="text-h5 mb-4">{{ formTitle }}</span>
                   </v-card-title>
                   <v-card-subtitle>
-                    <span class="text-subtitle1 font-weight-black">Productor:</span><span class="mr-4"> {{this.t.participant}} </span>
-                    <span class="text-subtitle1 font-weight-black">Equipo: </span>{{this.t.name}}
+                    <span class="text-subtitle1 font-weight-black"
+                      >Productor:</span
+                    ><span class="mr-4"> {{ this.t.participant }} </span>
+                    <span class="text-subtitle1 font-weight-black"
+                      >Equipo: </span
+                    >{{ this.t.name }}
                   </v-card-subtitle>
                   <v-card-text>
                     <v-container>
@@ -145,13 +156,11 @@
                           </v-menu>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-select
+                          <v-text-field
                             v-model="form2.categoria"
                             label="Categoria"
-                            :items="categorys"
-                            item-text="name"
-                            item-value="name"
-                          ></v-select>
+                            readonly
+                          ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                           <v-radio-group
@@ -175,30 +184,8 @@
                         </v-col>
                       </v-row>
                       <v-row>
-                        
                         <v-col cols="12" md="4">
-                           <v-radio-group
-                            v-model="form2.animal_type"
-                            row
-                            :rules="rules.required"
-                            @change="change_races"
-                          >
-                            <v-radio
-                              label="Ovino"
-                              value="OVINO"
-                              color="indigo"
-                              class="form-control-sm"
-                            ></v-radio>
-                            <v-radio
-                              label="Caprino"
-                              value="CAPRINO"
-                              color="indigo"
-                              class="form-control-sm"
-                            ></v-radio>
-                          </v-radio-group>
-                        </v-col>
-                        <v-col cols="12" md="4">
-                         <v-combobox
+                          <v-combobox
                             v-model="form2.race"
                             label="Raza"
                             item-text="name"
@@ -209,9 +196,8 @@
                             required
                           ></v-combobox>
                         </v-col>
-
                         <v-col cols="12" md="4">
-                         <v-combobox
+                          <v-combobox
                             v-model="form2.breeder"
                             label="Criador"
                             item-text="name"
@@ -220,34 +206,29 @@
                             class="form-control-sm"
                             :rules="rules.required"
                             required
-                          ></v-combobox>  
+                          ></v-combobox>
+                        </v-col>
+
+                        <v-col cols="12" md="4">
+                          <v-select
+                            v-model="form2.asociation"
+                            label="Asociación"
+                            class="form-control-sm"
+                            :rules="rules.required"
+                            required
+                            :items="asociations"
+                            item-text="name"
+                            item-value="name"
+                          />
                         </v-col>
                       </v-row>
-                      <v-row justify="center">
-                          <v-col cols="12" md="4">
-                          <v-select
-                              v-model="form2.asociation"
-                              label="Asociación"
-                              class="form-control-sm"
-                              :rules="rules.required"
-                              required
-                              :items="asociations"
-                              item-text="name"
-                              item-value="name"
-                            />
-                            </v-col>
-                      </v-row>
-                      
+
                       <v-card-actions>
                         <v-btn color="red" text @click="cerrar"> Cerrar </v-btn>
 
                         <v-spacer></v-spacer>
-                        <v-btn
-                          color="primary"
-                          text
-                          
-                          @click="submit2"
-                        ><!--:disabled="disableAccept" -->
+                        <v-btn color="primary" text @click="submit2"
+                          ><!--:disabled="disableAccept" -->
                           Aceptar
                         </v-btn>
                       </v-card-actions>
@@ -311,7 +292,7 @@
 </template> 
 <script>
 import axios from "@/axios";
-//import moment from "moment";
+import moment from "moment";
 export default {
   data() {
     return {
@@ -320,31 +301,30 @@ export default {
       },
       server: process.env.API_URL || "http://localhost:3000",
       custom: true,
-      link: "/equipos/index",
+      link: "/exhibicion/index",
       form: {
         participant: "",
         name: "",
-        type: "EXHIBICION",
+        animal_type: "OVINO",
       },
       form2: {
         name: "",
         tatoo: "",
         register: "",
         categoria: "",
+        subcategoria: "",
         breeder: "",
         sex: "M",
-        ID_team: '',
-        team: '',
-        birthday:'',
-        type: '' ,//animal specimen Caprino u Ovino,
-        race: '',
-        asociation: '',
-        group:'',
-        animal_type:'OVINO'
-        
+        ID_team: "",
+        team: "",
+        birthday: "",
+        type: "", //animal specimen Caprino u Ovino,
+        race: "",
+        asociation: "",
+        group: "",
       },
       data: [],
-      productors:[],
+      productors: [],
       team_save: false,
       selectedIndex: 0,
       disabled_button: false,
@@ -360,9 +340,9 @@ export default {
       races: [],
       breeders: [],
       categorys: [],
-      activate: false,
-      asociations:[], 
-      message:'',   
+      activate: true,
+      asociations: [],
+      message: "",
       headers: [
         {
           text: "Nombre",
@@ -431,16 +411,16 @@ export default {
     };
   },
   watch: {
-    /*date(val) {
+    date(val) {
       let birth = moment(val);
-      let today = moment('2021-07-10');
-      
+      let today = moment("2021-07-10");
+
       let days = today.diff(birth, "days");
-      //console.log(days)
+      console.log(days);
       let category = this.categorys.filter(
         (x) => days >= x.min && days <= x.max
       );
-    
+
       if (days >= 90) {
         this.form2.categoria = category[0].name;
         this.form2.group = category[0].group;
@@ -459,7 +439,7 @@ export default {
           duration: 3000,
         });
       }
-    },*/
+    },
   },
   computed: {
     formTitle() {
@@ -477,26 +457,25 @@ export default {
       axios
         .get("participant")
         .then((res) => {
-         // console.log("this.productors", res.data)
+          // console.log("this.productors", res.data)
           this.productors = res.data.filter((x) => x.owner == true);
           this.breeders = res.data.filter((x) => x.breeder == true);
-          
         })
         .catch((err) => {
           console.error(err);
         });
     },
-      getAsoc() {
-        axios
-          .get("asociations")
-          .then((res) => {
-            //console.log(res)
-            this.asociations = res.data;
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      },
+    getAsoc() {
+      axios
+        .get("asociations")
+        .then((res) => {
+          //console.log(res)
+          this.asociations = res.data;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
     submit() {
       this.form.name = this.form.name.toUpperCase();
       axios
@@ -510,12 +489,10 @@ export default {
           });
           this.team_save = true;
           this.t = res.data.t;
+          console.log("this.t", this.allRaces);
           this.activate = false;
-          /*this.races = this.allRaces.filter(
-            (x) => x.tipo === this.t.animal_type
-          );*/
+          this.races = this.allRaces.filter((x) => x.tipo === this.t.type);
           this.getExpositors();
-         
         })
         .catch((err) => {
           console.error(err);
@@ -528,29 +505,33 @@ export default {
         });
     },
     change_product() {
-      this.form.participant = (typeof this.form.participant == "object") ? this.form.participant.name.toUpperCase() : this.form.participant.toUpperCase()
-      this.form.name = this.form.participant+" EX"
+      this.form.participant =
+        typeof this.form.participant == "object"
+          ? this.form.participant.name.toUpperCase()
+          : this.form.participant.toUpperCase();
+      this.form.name = this.form.participant;
     },
     getRaces() {
       axios
         .get("race")
         .then((res) => {
           this.allRaces = res.data;
-          this.races = this.allRaces.filter(x => x.tipo === "OVINO")
+          this.races = this.allRaces.filter((x) => x.tipo === "OVINO");
         })
         .catch((err) => {
           console.error(err);
         });
     },
-    change_races(){ 
-      this.races = this.allRaces.filter(x => x.tipo === this.form2.animal_type)
+    change_races() {
+      this.races = this.allRaces.filter(
+        (x) => x.tipo === this.form.animal_type
+      );
     },
     getCategory() {
       axios
         .get("category")
         .then((res) => {
-            console.log("cat", res.data)
-          this.categorys = res.data.filter(x => x.exhibition == true);
+          this.categorys = res.data;
         })
         .catch((err) => {
           console.error(err);
@@ -558,103 +539,102 @@ export default {
     },
     cerrar() {
       this.dialog = false;
-      this.editedIndex = -1
+      this.editedIndex = -1;
       //this.resetform2()
     },
 
     submit2() {
       if (this.editedIndex > -1) {
-        this.updateItem(this.animals[this.editedIndex])
-      }else{
-        console.log(this.t)
-      this.form2.ID_team = this.t._id;
-      this.form2.birthday = this.date;
-      this.form2.team = this.t.name
-      //this.form2.type = this.form.animal_type
-      this.form2.owner = this.t.participant
-      let animal_per_race = this.animals.filter((x) => x.race == this.form2.race.name)
-      let animal_per_team = this.animals.length
-      //console.log(this.animals)
-      //let message = ''
-          
-      if((animal_per_race.length < 4) && (animal_per_team < 10)){
-        axios
-        .post(`/animalEx/register`, this.form2)
-        .then((res) => {
+        this.updateItem(this.animals[this.editedIndex]);
+      } else {
+        console.log(this.t);
+        this.form2.ID_team = this.t._id;
+        this.form2.birthday = this.date;
+        this.form2.team = this.t.name;
+        this.form2.type = this.form.animal_type;
+        this.form2.owner = this.t.participant;
+        let animal_per_race = this.animals.filter(
+          (x) =>
+            x.race == this.form2.race.name &&
+            x.category == this.form2.categoria &&
+            x.sex == this.form2.sex
+        );
+        let animal_per_team = this.animals.length;
+        console.log(this.form2);
+        //let message = ''
+
+        if (animal_per_race.length < 4 && animal_per_team < 10) {
+          axios
+            .post(`/animalEx/register`, this.form2)
+            .then((res) => {
+              this.$toast.open({
+                message: res.data.message,
+                type: "success",
+                position: "bottom",
+                duration: 3000,
+              });
+              this.animals.push(res.data.animal);
+              this.resetform2();
+              this.getExpositors();
+            })
+            .catch((err) => {
+              console.error(err);
+              this.$toast.open({
+                message: "Ups!...ocurrió un error :(",
+                type: "error",
+                position: "bottom",
+                duration: 5000,
+              });
+            });
+        } else {
+          let message = "";
+          if (animal_per_race.length > 4) {
+            message =
+              "Ha alcanzado el número máximo de ejemplares para esta RAZA en este equipo";
+          } else if (animal_per_team > 10) {
+            message = "Ha alcanzado el número de ejemplares para este equipo";
+          }
           this.$toast.open({
-            message: res.data.message,
-            type: "success",
-            position: "bottom",
-            duration: 3000,
-          });
-          this.animals.push(res.data.animal)
-          this.resetform2()
-          this.getExpositors()
-        })
-        .catch((err) => {
-          console.error(err);
-          this.$toast.open({
-            message: "Ups!...ocurrió un error :(",
-            type: "error",
-            position: "bottom",
-            duration: 5000,
-          });
-        });
-      }else{
-        if(animal_per_race.length > 4){
-          this.message = "Ha alcanzado el número máximo de ejemplares para esta RAZA en este equipo"  
-        }else if(animal_per_team > 10){
-          this.message = "Ha alcanzado el número de ejemplares para este equipo"
-          
-        }
-        this.$toast.open({
-            message: this.message,
+            message: message,
             type: "warning",
             position: "top",
             duration: 3000,
           });
+        }
       }
-    }  
-      
-      
-
     },
-    resetform2(){
-      this.form2.register = ''
-      this.form2.tatoo = ''
-      this.form2.name = ''
+    resetform2() {
+      this.form2.register = "";
+      this.form2.tatoo = "";
+      this.form2.name = "";
       //this.date = new Date().toISOString().substr(0, 10)
-      this.form2.birth = ''
-      this.form2.categoria = ''
-      this.form2.race = ''
-      this.form2.breeder = '',
-      this.form2.asociation = ''
-      this.form2.group = ''
-
+      this.form2.birth = "";
+      this.form2.categoria = "";
+      this.form2.race = "";
+      this.form2.breeder = ""; 
+      this.form2.asociation = "";
+      this.form2.group = "";
     },
-    editItem(item){
+    editItem(item) {
       //this.disableAccept = false
       //this.disabled = false
       //console.log(item)
       this.getExpositors();
-      this.editedIndex = this.animals.indexOf(item)
-      this.dialog = true
-      this.form2.name = item.name
-      this.form2.register = item.register
-      this.form2.tatoo = item.tatoo
-      this.form2.categoria = item.category
-      this.form2.race = item.race
-      this.form2.breeder = item.breeder
-      this.form2.asociation = item.asociation
-      this.form2.animal_type = item.animal_type
-      this.date = item.birthday.slice(0,10)
-
-      
+      this.editedIndex = this.animals.indexOf(item);
+      this.dialog = true;
+      this.form2.name = item.name;
+      this.form2.register = item.register;
+      this.form2.tatoo = item.tatoo;
+      this.form2.categoria = item.category;
+      this.form2.race = item.race;
+      this.form2.breeder = item.breeder;
+      this.form2.asociation = item.asociation;
+      this.date = item.birthday.slice(0, 10);
     },
-    updateItem(item){
-     // console.log(this.form2)
+    updateItem(item) {
+      // console.log(this.form2)
       this.form2.birthday = this.date;
-      let pos = this.animals.indexOf(item)
+      let pos = this.animals.indexOf(item);
       axios
         .put(`/animalEx/update/${item._id}`, this.form2)
         .then((res) => {
@@ -664,57 +644,80 @@ export default {
             position: "bottom",
             duration: 3000,
           });
-          
-          this.editedIndex = -1
-          this.animals[pos].name = this.form2.name
-          this.animals[pos].register = this.form2.register
-          this.animals[pos].tatoo = this.form2.tatoo,
-          this.animals[pos].breeder = this.form2.breeders
-          this.animals[pos].category = this.form2.categoria
-          this.animals[pos].race = this.form2.race.name
-          this.animals[pos].birthday = this.form2.birthday
-          this.animals[pos].breeder = this.form2.breeder.name
-          this.animals[pos].sex = this.form2.sex
-          this.animals[pos].animal_type = this.form2.animal_type
-          this.resetform2()
-          this.dialog = false
-           
+
+          this.editedIndex = -1;
+          this.animals[pos].name = this.form2.name;
+          this.animals[pos].register = this.form2.register;
+          (this.animals[pos].tatoo = this.form2.tatoo),
+            (this.animals[pos].breeder = this.form2.breeders);
+          this.animals[pos].category = this.form2.categoria;
+          this.animals[pos].race = this.form2.race.name;
+          this.animals[pos].birthday = this.form2.birthday;
+          this.animals[pos].breeder = this.form2.breeder.name;
+          this.animals[pos].sex = this.form2.sex;
+          this.resetform2();
+          this.dialog = false;
         })
         .catch((err) => {
           console.error(err);
           this.$toast.open({
             message: "Ups!...ocurrió un error :(",
-            type: "error",
+            type: "error", getRaces() {
+      axios
+        .get("race")
+        .then((res) => {
+          this.allRaces = res.data;
+          this.races = this.allRaces.filter((x) => x.tipo === "OVINO");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
             position: "bottom",
             duration: 5000,
           });
         });
     },
-    deleteItem (item) {
-        
-        let pos = this.data.indexOf(item)
-        axios
-          .post(`/animal/deleted/${item._id}`)
-          .then( res => {
-            this.$toast.open({
-              message: res.data.message,
-              type: "warning",
-              position: "bottom",
-              duration: 5000,
-            });
-            this.animals.splice(pos, 1)
-          } )
-          .catch((err) => {
-            console.error(err);
-            this.$toast.open({
-              message: "Ups!...ocurrió un error :(",
-              type: "error",
-              position: "bottom",
-              duration: 5000,
-            });
-          })
-     
-      }
+    deleteItem(item) {
+      this.$swal
+        .fire({
+          title: "Está seguro de Eliminar este ejemplar?",
+          showCancelButton: true,
+          cancelButtonText: "No",
+          confirmButtonText: `Sí`,
+          customClass: {
+            cancelButton: "order-1 right-gap",
+            confirmButton: "order-2",
+          },
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            let pos = this.data.indexOf(item);
+            axios
+              .post(`/animalEx/deleted/${item._id}`)
+              .then((res) => {
+                this.$toast.open({
+                  message: res.data.message,
+                  type: "warning",
+                  position: "bottom",
+                  duration: 5000,
+                });
+                this.animals.splice(pos, 1);
+              })
+              .catch((err) => {
+                console.error(err);
+                this.$toast.open({
+                  message: "Ups!...ocurrió un error :(",
+                  type: "error",
+                  position: "bottom",
+                  duration: 5000,
+                });
+              });
+          } else if (result.isDenied) {
+            //algo
+          }
+        });
+    },
   },
 };
 </script>

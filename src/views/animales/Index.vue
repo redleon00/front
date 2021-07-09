@@ -30,12 +30,19 @@
       </div>
     </div>
     <div class="row">
+      <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
+        <v-tab v-for="item in items" :key="item">
+          {{ item }}
+        </v-tab>
+      </v-tabs>
+       <v-tabs-items v-model="tab">
+           <v-tab-item>
       <div class="col-md-12">
         <v-data-table
           :headers="headers"
-          :items="data"
-          loading
-          loading-text="Please wait"
+          :items="data1"
+          
+          no-data-text="Sin datos"
           :search="search"
           :items-per-page="10"
           :page.sync="page"
@@ -56,19 +63,63 @@
             <v-icon
               small
               class="ml-4"
-              @click="deleteItem(item)"
+              @click="deleteItem(item, 1)"
             >
              fa fa-trash
             </v-icon>
         </template>
         </v-data-table>
+        <div class="row">
+          <div class="col">
+            <v-pagination v-model="page" :length="pageCount"></v-pagination>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <v-pagination v-model="page" :length="pageCount"></v-pagination>
+        </v-tab-item>
+        <!-- caprinos-->
+        <v-tab-item>
+      <div class="col-md-12">
+        <v-data-table
+          :headers="headers"
+          :items="data2"
+          no-data-text="Sin datos"
+          :search="search"
+          :items-per-page="10"
+          :page.sync="page"
+          hide-default-footer
+          @page-count="pageCount2 = $event"
+          class="border"
+          id="table"
+        >
+        <template  v-slot:[`item.actions`]="{ item }">
+            <v-icon
+              small
+              class="mr-4"
+              @click="editItem(item)"
+            >
+              fa fa-edit
+            </v-icon>
+           
+            <v-icon
+              small
+              class="ml-4"
+              @click="deleteItem(item, 2)"
+            >
+             fa fa-trash
+            </v-icon>
+        </template>
+        </v-data-table>
+        <div class="row">
+          <div class="col">
+            <v-pagination v-model="page2" :length="pageCount2"></v-pagination>
+          </div>
+        </div>
       </div>
+        </v-tab-item>
+        
+      </v-tabs-items>  
     </div>
+    
   </div>
   
 </template>
@@ -84,7 +135,13 @@ export default {
       page: 1,
       type: 0,
       pageCount: 0,
+      page2: 1,
+      pageCount2: 0,
       data: [],
+      data1: [],
+      data2: [],
+      items: ["OVINOS", "CAPRINOS"],
+      tab: null,
       search: "",
       link: "/animales/nuevo",
       headers: [
@@ -110,10 +167,10 @@ export default {
           class: "thead-light",
         },
         {
-          text: "Categoria",
+          text: "Fecha de Nac",
           align: "center",
           sortable: true,
-          value: "category",
+          value: "birthday",
           class: "thead-light",
         },
         {
@@ -128,13 +185,6 @@ export default {
           align: "center",
           sortable: true,
           value: "breeder",
-          class: "thead-light",
-        },
-        {
-          text: "Equipo",
-          align: "center",
-          sortable: true,
-          value: "team",
           class: "thead-light",
         },
         {
@@ -161,19 +211,25 @@ export default {
   methods: {
     
     getAnimals(){
-      axios.get("animal")
+      axios.get("animalAll")
 			.then(res => {
 				this.data = res.data
-        console.log("animales", this.data)
+        console.log(this.data)
+        //this.data.map(x => x.birthday = x.birthday.substr(0, 10))
+        this.data1 = this.data.filter(x => x.type == 'OVINO' )
+        this.data2 = this.data.filter(x => x.type == 'CAPRINO' )
+        //console.log("animales", this.data1)
 			})
 			.catch(err => {
 				console.error(err); 
 			})
+      
+      
     },
-    deleteItem (item) {
-        let pos = this.data.indexOf(item)
+    deleteItem (item, data) {
+        
         axios
-          .post(`/animal/deleted/${item._id}`)
+          .post(`/animalAll/deleted/${item._id}`)
           .then( res => {
             this.$toast.open({
               message: res.data.message,
@@ -181,7 +237,14 @@ export default {
               position: "bottom",
               duration: 5000,
             });
-            this.data.splice(pos, 1)
+            if(data == 1){
+              let pos = this.data1.indexOf(item)
+              this.data1.splice(pos, 1)
+            }else{
+              let pos = this.data2.indexOf(item)
+              this.data2.splice(pos, 1)
+            }
+            
           } )
           .catch((err) => {
             console.error(err);
