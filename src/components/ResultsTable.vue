@@ -26,7 +26,7 @@
         <div class="row justify-content-center" >
           <div class="col-md-10">
              <v-data-table
-              :headers="headers"
+              :headers="head"
               :items="data"
               loading
               :items-per-page="25"
@@ -72,6 +72,9 @@ export default {
     toggled: {
       type: Boolean,
     },
+    head: {
+      type: Array,
+    },
    
   },
 
@@ -79,84 +82,11 @@ export default {
     return {
       page:1,
       pageCount:0,
-       headers: [
-        {
-          text: "Equipo",
-          align: "start",
-          sortable: true,
-          value: "team",
-          class: "thead-light",
-        },
-        {
-          text: "1eros Categoria",
-          align: "center",
-          sortable: false,
-          value: "primero_category",
-          class: "thead-light",
-        },
-        {
-          text: "2dos Categoria",
-          align: "center",
-          sortable: false,
-          value: "segundo_category",
-          class: "thead-light",
-        },
-        {
-          text: "3eros Categoria",
-          align: "center",
-          sortable: false,
-          value: "tercero_category",
-          class: "thead-light",
-        },
-        {
-          text: "Menor",
-          align: "center",
-          sortable: false,
-          value: "menor",
-          class: "thead-light",
-        },
-        {
-          text: "Joven",
-          align: "center",
-          sortable: false,
-          value: "joven",
-          class: "thead-light",
-        },
-        {
-          text: "Adultos",
-          align: "center",
-          sortable: false,
-          value: "adulto",
-          class: "thead-light",
-        },
-        {
-          text: "Raza",
-          align: "center",
-          sortable: false,
-          value: "raza",
-          class: "thead-light",
-        },
-        {
-          text: "Reservado",
-          align: "center",
-          sortable: false,
-          value: "reservado",
-          class: "thead-light",
-        },
-        {
-          text: "Total",
-          align: "center",
-          sortable: false,
-          value: "total",
-          class: "thead-light",
-        },
-        
-        
-      ],
+      
     };
   },
   created() {
-    console.log("animales que llegaron", this.item);
+    console.log("animales que llegaron", this.head);
   },
   methods: {
     close() {

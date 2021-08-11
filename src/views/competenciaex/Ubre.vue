@@ -55,9 +55,9 @@
               {{ !item.status ? "fas fa-check-double" : "fa fa-trophy" }}
             </v-icon>
 
-            <v-icon small class="ml-4" @click="viewItem(item)">
+            <!--<v-icon small class="ml-4" @click="viewItem(item)">
               {{ !item.status ? "fa fa-eye" : "" }}
-            </v-icon>
+            </v-icon>-->
           </template>
         </v-data-table>
         <div class="row">

@@ -16,6 +16,7 @@
         :toggled="this.toggled"
         :data="this.data"
         @closed="closed"
+        :head="head"
       />
       <div class="col-md-2">
         <div data-app>
@@ -134,6 +135,7 @@ export default {
       dataAsocCapri:[],
       title_card:'',
       toggled: false,
+      head:[],
       headers: [
         {
           text: "Tabla",
@@ -151,6 +153,169 @@ export default {
           value: "actions",
         },
       ],
+       headO: [
+        {
+          text: "Equipo",
+          align: "start",
+          sortable: true,
+          value: "team",
+          class: "thead-light",
+        },
+        {
+          text: "1eros Categoria",
+          align: "center",
+          sortable: false,
+          value: "primero_category",
+          class: "thead-light",
+        },
+        {
+          text: "2dos Categoria",
+          align: "center",
+          sortable: false,
+          value: "segundo_category",
+          class: "thead-light",
+        },
+        {
+          text: "3eros Categoria",
+          align: "center",
+          sortable: false,
+          value: "tercero_category",
+          class: "thead-light",
+        },
+        {
+          text: "Menor",
+          align: "center",
+          sortable: false,
+          value: "menor",
+          class: "thead-light",
+        },
+        {
+          text: "Joven",
+          align: "center",
+          sortable: false,
+          value: "joven",
+          class: "thead-light",
+        },
+        {
+          text: "Adultos",
+          align: "center",
+          sortable: false,
+          value: "adulto",
+          class: "thead-light",
+        },
+        {
+          text: "Raza",
+          align: "center",
+          sortable: false,
+          value: "raza",
+          class: "thead-light",
+        },
+        {
+          text: "Reservado",
+          align: "center",
+          sortable: false,
+          value: "reservado",
+          class: "thead-light",
+        },
+        {
+          text: "Total",
+          align: "center",
+          sortable: false,
+          value: "total",
+          class: "thead-light",
+        },
+        
+        
+      ],
+       headC: [
+        {
+          text: "Equipo",
+          align: "start",
+          sortable: true,
+          value: "team",
+          class: "thead-light",
+        },
+        {
+          text: "1eros Categoria",
+          align: "center",
+          sortable: false,
+          value: "primero_category",
+          class: "thead-light",
+        },
+        {
+          text: "2dos Categoria",
+          align: "center",
+          sortable: false,
+          value: "segundo_category",
+          class: "thead-light",
+        },
+        {
+          text: "3eros Categoria",
+          align: "center",
+          sortable: false,
+          value: "tercero_category",
+          class: "thead-light",
+        },
+        {
+          text: "Menor",
+          align: "center",
+          sortable: false,
+          value: "menor",
+          class: "thead-light",
+        },
+        {
+          text: "Joven",
+          align: "center",
+          sortable: false,
+          value: "joven",
+          class: "thead-light",
+        },
+        {
+          text: "Adultos",
+          align: "center",
+          sortable: false,
+          value: "adulto",
+          class: "thead-light",
+        },
+        {
+          text: "Raza",
+          align: "center",
+          sortable: false,
+          value: "raza",
+          class: "thead-light",
+        },
+        {
+          text: "Reservado",
+          align: "center",
+          sortable: false,
+          value: "reservado",
+          class: "thead-light",
+        },
+        {
+          text: "Ubre",
+          align: "center",
+          sortable: false,
+          value: "ubre",
+          class: "thead-light",
+        },
+        {
+          text: "Ordeño",
+          align: "center",
+          sortable: false,
+          value: "ordeno",
+          class: "thead-light",
+        },
+        {
+          text: "Total",
+          align: "center",
+          sortable: false,
+          value: "total",
+          class: "thead-light",
+        },
+        
+        
+      ],
+     
     };
   },
   created() {
@@ -213,6 +378,7 @@ export default {
       viewItem(item) {
         console.log(item, "item")
         if(item.animal_type == "OVINO"){
+          this.head = this.headO
           if(item.type == "E"){
             this.data = this.dataExpoOvi
           }else if(item.type == "C"){
@@ -222,6 +388,7 @@ export default {
             this.data = this.dataAsocOvi
           }
         }else{
+          this.head = this.headC
           if(item.type == "E"){
             this.data = this.dataExpoCapri
           }else if(item.type == "C"){

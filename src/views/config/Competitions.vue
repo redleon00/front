@@ -46,6 +46,30 @@
           </v-btn>
         
         </div>
+         <v-divider></v-divider>
+        <div class="text-center">
+         <download-excel :data="dataC" :fields="headersC" worksheet="Animales" name="categorias.xls">
+          <v-btn class="ma-2" outlined color="indigo"  @click="genRepC">
+            Generar Reportes Categorias
+          </v-btn>
+          </download-excel>
+          <download-excel :data="dataG" :fields="headersG"  worksheet="Animales" name="grupos.xls">
+          <v-btn class="ma-2" outlined color="indigo"  @click="genRepG">
+            Generar Reportes Grupos
+          </v-btn>
+          </download-excel>
+          <download-excel :data="dataR" :fields="headersR" worksheet="Animales" name="razas.xls">
+          <v-btn class="ma-2" outlined color="indigo"  @click="genRepR">
+            Generar Reportes Razas
+          </v-btn>
+          </download-excel>
+          <download-excel :data="dataS" :fields="headersS" worksheet="Animales" name="supremo.xls">
+          <v-btn class="ma-2" outlined color="indigo"  @click="genRepS">
+            Generar Reportes Supremo
+          </v-btn>
+          </download-excel>
+        
+        </div>
       </v-card-text>
     </v-card>
   </v-container>
@@ -58,6 +82,10 @@ export default {
       title: "Crear Competencias",
       data1:[],
       data2:[],
+      dataC:[],
+      dataG:[],
+      dataR:[],
+      dataS:[],
       headers:{
         "Ejemplar":"name",
         "Fecha de Nacimiento":"birthday",
@@ -73,7 +101,61 @@ export default {
         "Asociación": "asociation",
         "Última Actualización": "updated_at"
 
-      }
+      },
+      headersC:{
+        "Especimen":"type_animal",
+        "Competencia":"name_competencia",
+        "Raza":"race",
+        "Categoria":"category",
+        "Sexo":"sex",
+        "Campeón":"firts_animal.name",
+        "Fec Nac1":"firts_animal.birthday",
+        "Expositor1":"firts_animal.team",
+        "Criador1":"firts_animal.breeder",
+        "2do Lugar":"second_animal.name",
+        "Fec Nac2":"second_animal.birthday",
+        "Expositor2":"second_animal.team",
+        "Criador2":"second_animal.breeder",
+        "3er Lugar":"third_animal.name",
+        "Fec Nac3":"third_animal.birthday",
+        "Expositor3":"third_animal.team",
+        "Criador3":"third_animal.breeder",
+      },
+      headersG:{
+        "Especimen":"type_animal",
+        "Competencia":"name_competencia",
+        "Raza":"race",
+        "Sexo":"sex",
+        "Grupo": "group",
+        "Campeón":"firts_animal.name",
+        "Fec Nac1":"firts_animal.birthday",
+        "Expositor1":"firts_animal.team",
+        "Criador1":"firts_animal.breeder",
+      },
+      headersR:{
+        "Especimen":"type_animal",
+        "Competencia":"name_competencia",
+        "Raza":"race",
+        "Sexo":"sex",
+        "Campeón":"firts_animal.name",
+        "Fec Nac1":"firts_animal.birthday",
+        "Expositor1":"firts_animal.team",
+        "Criador1":"firts_animal.breeder",
+        "2do Lugar":"second_animal.name",
+        "Fec Nac2":"second_animal.birthday",
+        "Expositor2":"second_animal.team",
+        "Criador2":"second_animal.breeder",
+      },
+      headersS:{
+        "Especimen":"type_animal",
+        "Competencia":"name_competencia",
+        "Sexo":"sex",
+        "Campeón":"firts_animal.name",
+        "Raza":"firts_animal.race",
+        "Fec Nac1":"firts_animal.birthday",
+        "Expositor1":"firts_animal.team",
+        "Criador1":"firts_animal.breeder",
+      },
     };
   },
   created(){
@@ -278,8 +360,77 @@ export default {
       .catch((err) => {
         console.error(err);
       });
-  }
   },
+  genRepC(){
+    axios
+      .get("functions/resultCategory")
+      .then((res) => {
+        this.dataC = res.data.results;
+        console.log(res.dataC)
+        this.$toast.open({
+          message: "Generado",
+          type: res.data.type,
+          position: "bottom",
+          duration: 3000,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  },
+  genRepG(){
+    axios
+      .get("functions/resultGroup")
+      .then((res) => {
+        this.dataG = res.data.results;
+        console.log(res.dataG)
+        this.$toast.open({
+          message: "Generado",
+          type: res.data.type,
+          position: "bottom",
+          duration: 3000,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  },
+  genRepR(){
+    axios
+      .get("functions/resultRace")
+      .then((res) => {
+        this.dataR = res.data.results;
+        console.log(res.data)
+        this.$toast.open({
+          message: "Generado",
+          type: res.data.type,
+          position: "bottom",
+          duration: 3000,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  },
+  genRepS(){
+    axios
+      .get("functions/resultSupreme")
+      .then((res) => {
+        this.dataS = res.data.results;
+        console.log(res.dataS)
+        this.$toast.open({
+          message: "Generado",
+          type: res.data.type,
+          position: "bottom",
+          duration: 3000,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  },
+  },
+  
   
 };
 </script>

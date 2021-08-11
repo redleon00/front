@@ -159,6 +159,7 @@ export default {
         .get("resultsEx/resultOrdeno")
         .then((res) => {
           this.data = res.data.resultsOrdeno;
+          this.data.map((x) => x.total = Math.round(x.total * 100) / 100)
           for (let i = 0; i < 3; i++) {
             this.results.push(this.data[i]);
           }

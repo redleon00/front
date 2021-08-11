@@ -50,8 +50,9 @@
         </v-card-text>
 
         <v-card-actions>
-          
           <v-btn color="red" text @click="close"> Cerrar </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="green" text @click="desert"> Desierto </v-btn>
           <v-spacer></v-spacer>
           <v-btn color="blue" text @click="save">
             Guardar
@@ -95,7 +96,9 @@ export default {
             form:{
                 first:[],
                 second:[],
-                third:[]
+                third:[],
+                status_result: 'V'
+
             }
         }
     },
@@ -111,6 +114,16 @@ export default {
         },
         save(){
             this.$emit("saved", this.form)
+            this.form.first = []
+            this.form.second = []
+            this.form.third = []
+        },
+        desert(){
+          this.form.status_result = 'D'
+          this.$emit("deserted", this.form)
+          this.form.first = []
+          this.form.second = []
+          this.form.third = []
         }
     }
     

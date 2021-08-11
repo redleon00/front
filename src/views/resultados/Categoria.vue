@@ -54,8 +54,13 @@
               :key="componentKey"
             >
             <template v-slot:[`item.actions`]="{ item }">
-                <v-icon small class="ml-4" @click="viewItem(item)">
-                  fa fa-eye
+                <v-icon 
+                small 
+                class="ml-4" 
+                @click="viewItem(item)"
+                :disabled="item.status_result === 'D'"
+                >
+                  {{ (item.status_result == 'V') ? "fa fa-eye" : "fa fa-ban" }}
                 </v-icon>
               </template>
             </v-data-table>
@@ -85,8 +90,13 @@
             >
               <template v-slot:[`item.actions`]="{ item }">
               
-                <v-icon small class="ml-4" @click="viewItem(item)">
-                   fa fa-eye 
+                <v-icon 
+                small 
+                class="ml-4" 
+                @click="viewItem(item)" 
+                :disabled="item.status_result === 'D'"
+                >
+                   {{ (item.status_result == 'V') ? "fa fa-eye" : "fa fa-ban" }}
                 </v-icon>
               </template>
             </v-data-table>
@@ -184,7 +194,7 @@ export default {
         },
         {
           text: "Acciones",
-          align: "start",
+          align: "center",
           sortable: false,
           class: "thead-light",
           value: "actions",
@@ -206,7 +216,7 @@ export default {
          
           this.data1.forEach((x) => {
             x.disabled = false;
-            x.owners1 = x.firts_animal.team+"/"+x.firts_animal.breeder
+            x.owners1 = (Object.keys(x.firts_animal).length === 0) ? '' : x.firts_animal.team+"/"+x.firts_animal.breeder
             x.owners2 = (Object.keys(x.second_animal).length === 0) ? '' : x.second_animal.team+"/"+x.second_animal.breeder 
             x.owners3 = (Object.keys(x.third_animal).length === 0) ? '' : x.third_animal.team+"/"+x.third_animal.breeder
           });
@@ -215,7 +225,7 @@ export default {
           this.data2 = res.data.filter((x) => x.type_animal == "CAPRINO");
           this.data2.forEach((x) => {
             x.disabled = false;
-            x.owners1 = x.firts_animal.team+"/"+x.firts_animal.breeder
+            x.owners1 = (Object.keys(x.firts_animal).length === 0) ? '' : x.firts_animal.team+"/"+x.firts_animal.breeder
             x.owners2 = (Object.keys(x.second_animal).length === 0) ? '' : x.second_animal.team+"/"+x.second_animal.breeder 
             x.owners3 = (Object.keys(x.third_animal).length === 0) ? '' : x.third_animal.team+"/"+x.third_animal.breeder
           });

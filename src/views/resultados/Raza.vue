@@ -154,7 +154,7 @@ export default {
           text: "Expositor/Criador",
           align: "center",
           sortable: true,
-          value: "firts_animal.owner",
+          value: "firts_animal.owner1",
           class: "thead-light",
         },
         
@@ -162,14 +162,14 @@ export default {
           text: "Reservado",
           align: "center",
           sortable: true,
-          value: "second_animal.breeder",
+          value: "second_animal.name",
           class: "thead-light",
         },
         {
           text: "Expositor/Criador",
           align: "center",
           sortable: true,
-          value: "firts_animal.owner",
+          value: "firts_animal.owner2",
           class: "thead-light",
         },
         {

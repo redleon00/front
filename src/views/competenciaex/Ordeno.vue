@@ -68,9 +68,9 @@
               small
               class="mr-4"
               @click="editItem(item)"
-              :disabled="!item.status"
+              :disabled="activate"
             >
-              {{ !item.status ? "fas fa-check-double" : "fa fa-trophy" }}
+              {{ (item.status == false ) ? "fas fa-check-double" : "fa fa-trophy" }}
             </v-icon>
           </template>
         </v-data-table>
@@ -103,7 +103,8 @@ export default {
       open: false,
       animals: [],
       animalsSelect: [],
-      activate: false,
+      activate: '',
+      status: '',
       item: {
         _id: "",
         results_pts: {
@@ -175,23 +176,28 @@ export default {
       ],
     };
   },
-  mounted() {
+  created() {
     this.getCompe();
     this.getAnimals();
+    
   },
 
   methods: {
+    setActivate(){
+        console.log("status", this.data[0].status)
+        this.activate = !this.data[0].status
+    },
     getCompe() {
       axios
         .get(`competitionsEx/listCompOrdeno/`)
         .then((res) => {
-          console.log("data", res.data);
           this.data = res.data;
-          this.activate = this.data.status
+          this.status = this.data.status
+          this.setActivate();
         })
         .catch((err) => {
           console.error(err);
-        });
+        });   
     },
     getAnimals() {
       axios
@@ -200,6 +206,7 @@ export default {
           this.animals = res.data;
           console.log("los animales", this.animals);
           this.animals.map((x) => {
+            //x.status = !x.status
             if (x.results_pts.length == 0) {
               x.results_pts.firts_point = 0;
               x.results_pts.second_point = 0;
@@ -216,19 +223,17 @@ export default {
               x.results_pts.second_point = x.results_pts[0].second_point;
               x.results_pts.third_point = x.results_pts[0].third_point;
               x.results_pts.four_point = x.results_pts[0].four_point;
-              x.results_pts.total =
-                parseFloat(x.results_pts[0].firts_point) +
-                parseFloat(x.results_pts[0].second_point) +
-                parseFloat(x.results_pts[0].third_point) +
-                parseFloat(x.results_pts[0].four_point);
+              x.results_pts.total = parseFloat(x.results_pts[0].firts_point) + parseFloat(x.results_pts[0].second_point) + parseFloat(x.results_pts[0].third_point) + parseFloat(x.results_pts[0].four_point);
+              x.results_pts.total = Math.round((x.results_pts.total * 100) / 100)
+             
             }
           });
-
-          console.log("animales", this.animals);
+          
         })
         .catch((err) => {
           console.error(err);
         });
+       
     },
     editItem(item) {
       this.animals.forEach(function (x) {
@@ -285,7 +290,7 @@ export default {
                   duration: 5000,
                 });
                 let pos = this.animals.indexOf(this.item);
-
+                this.animals[pos].status = true
                 this.animals[pos].results_pts.firts_point = data.firts_point;
                 this.animals[pos].results_pts.second_point = data.second_point;
                 this.animals[pos].results_pts.third_point = data.third_point;
@@ -295,7 +300,7 @@ export default {
                   parseFloat(this.animals[pos].results_pts.second_point) +
                   parseFloat(this.animals[pos].results_pts.third_point) +
                   parseFloat(this.animals[pos].results_pts.four_point);
-                console.log("posicion", this.animals[pos]);
+                //console.log("posicion", this.animals[pos]);
 
                 //this.data[pos].status = false;
                 this.open = false;
@@ -320,7 +325,7 @@ export default {
       this.$swal
         .fire({
           icon: "warning",
-          title: "Está seguro de guardar estos resultados?",
+          title: "Está seguro de guardar estos resultados y cerrar las competencias de Ordeño ?",
           showCancelButton: true,
           cancelButtonText: "No",
           confirmButtonText: `Sí`,
@@ -341,6 +346,7 @@ export default {
                   duration: 3000,
                 });
                 this.activate = true
+                this.$router.go()
               })
               .catch((err) => {
                 console.log(err);

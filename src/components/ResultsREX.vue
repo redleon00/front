@@ -10,7 +10,7 @@
         <div class="page-header text-center">
          
           <h1 class="display-3 ">
-            <strong> {{"EXHIBICIÓN "}}{{ item.category+" " }}{{item.sex == 'M' ? 'MACHO' : 'HEMBRA'}} </strong>
+            <strong> {{"EXHIBICIÓN "}}{{item.race+" "}}{{ item.category+" " }}{{item.sex == 'M' ? 'MACHO' : 'HEMBRA'}} </strong>
           </h1>
         
         </div>

@@ -64,9 +64,9 @@
                   {{ !item.status ? "fas fa-check-double" : "fa fa-trophy" }}
                 </v-icon>
 
-                <v-icon small class="ml-4" @click="viewItem(item)">
+                <!--<v-icon small class="ml-4" @click="viewItem(item)">
                   {{ !item.status ? "fa fa-eye" : "" }}
-                </v-icon>
+                </v-icon>-->
               </template>
             </v-data-table>
             <div class="row">
@@ -102,9 +102,9 @@
                   {{ !item.status ? "fas fa-check-double" : "fa fa-trophy" }}
                 </v-icon>
 
-                <v-icon small class="ml-4" @click="viewItem(item)">
+                <!--<v-icon small class="ml-4" @click="viewItem(item)">
                   {{ !item.status ? "fa fa-eye" : "" }}
-                </v-icon>
+                </v-icon>-->
               </template>
             </v-data-table>
             <div class="row">
@@ -158,10 +158,10 @@ export default {
           class: "thead-light",
         },
         {
-          text: "Especie",
-          align: "start",
+          text: "Raza",
+          align: "center",
           sortable: true,
-          value: "type_animal",
+          value: "race",
           class: "thead-light",
         },
         {
@@ -198,7 +198,7 @@ export default {
       axios
         .get(`competitionsEx/listCompRace/`)
         .then((res) => {
-          console.log(res.data);
+          console.log("DATAC", res.data);
           this.data1 = res.data.filter((x) => x.type_animal == "OVINO");
           this.data1.forEach((x) => {
             x.disabled = false;
@@ -230,9 +230,10 @@ export default {
       console.log("item", item)
       
       let fil = {
+        race: item.race,
         sex: item.sex,
         category: item.category,
-        type: item.type_animal,
+        type: item.type_animal
       };
       let select = this.animals.filter(function (x) {
         for (var i in fil) {
@@ -241,7 +242,7 @@ export default {
         return true;
       });
       select.forEach(function(x){
-        x.showname = x.tatoo+'-'+x.name
+        x.showname = x.tatoo+' - '+x.name
       })
       /*select = select.map((element) => {
         return element.firts_animal;
@@ -257,12 +258,13 @@ export default {
       this.open = false;
     },
     save(form) {
-      console.log("llego al save de grupos", form);
+      console.log("llego al save de 3 -6 meses x razas", form);
       let data = {};
       data.id_competencia = this.item._id;
       data.name_competencia = this.item.name;
       data.category = this.item.category;
       data.sex = this.item.sex;
+      data.race = this.item.race
       data.firts_animal = form.first;
       data.pts_first = this.item.pts_first;
       data.second_animal = form.second;

@@ -17,6 +17,7 @@
         :inputs="this.inputs"
         @closed="closed"
         @saved="save"
+        @deserted="desert"
       />
       <div class="col-md-2">
         <div data-app>
@@ -63,18 +64,40 @@
               :key="componentKey"
             >
               <template v-slot:[`item.actions`]="{ item }">
-                <v-icon
-                  small
-                  class="mr-4"
-                  @click="editItem(item)"
-                  :disabled="!item.status"
-                >
-                  {{ !item.status ? "fas fa-check-double" : "fa fa-trophy" }}
-                </v-icon>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      <v-icon
+                        small
+                        class="mr-4"
+                        color="red"
+                        @click="editItem(item)"
+                        :disabled="!item.status"
+                      >
+                        {{
+                          !item.status ? "fas fa-check-double" : "fa fa-trophy"
+                        }}
+                      </v-icon>
+                    </div>
+                  </template>
+                  <span>{{ !item.status ? "Calificada" : "Calificar" }}</span>
+                </v-tooltip>
 
-                <v-icon small class="ml-4" @click="viewItem(item)">
-                  {{ !item.status ? "fa fa-eye" : "" }}
-                </v-icon>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      <v-icon
+                        small
+                        class="mr-4"
+                        color="red"
+                        @click="editItem(item)"
+                      >
+                        {{ !item.status ? "fas fa-backward" : "" }}
+                      </v-icon>
+                    </div>
+                  </template>
+                  <span>{{ item.status ? "" : "Deshacer Calificación" }}</span>
+                </v-tooltip>
               </template>
             </v-data-table>
             <div class="row">
@@ -100,24 +123,47 @@
               :key="componentKey"
             >
               <template v-slot:[`item.actions`]="{ item }">
-                <v-icon
-                  small
-                  class="mr-4"
-                  color="red"
-                  @click="editItem(item)"
-                  :disabled="!item.status"
-                >
-                  {{ !item.status ? "fas fa-check-double" : "fa fa-trophy" }}
-                </v-icon>
-
-                <v-icon small class="ml-4" @click="viewItem(item)">
-                  {{ !item.status ? "fa fa-eye" : "" }}
-                </v-icon>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      <v-icon
+                        small
+                        class="mr-4"
+                        color="red"
+                        @click="editItem(item)"
+                        :disabled="!item.status"
+                      >
+                        {{
+                          !item.status ? "fas fa-check-double" : "fa fa-trophy"
+                        }}
+                      </v-icon>
+                    </div>
+                  </template>
+                  <span>{{ !item.status ? "Calificada" : "Calificar" }}</span>
+                </v-tooltip>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      <v-icon
+                        small
+                        class="mr-4"
+                        color="red"
+                        @click="editItem(item)"
+                      >
+                        {{ !item.status ? "fa fa-refresh" : "" }}
+                      </v-icon>
+                    </div>
+                  </template>
+                  <span>{{ !item.status ? "" : "Deshacer Calificación" }}</span>
+                </v-tooltip>
               </template>
             </v-data-table>
             <div class="row">
               <div class="col">
-                <v-pagination v-model="page2" :length="pageCount2"></v-pagination>
+                <v-pagination
+                  v-model="page2"
+                  :length="pageCount2"
+                ></v-pagination>
               </div>
             </div>
           </div>
@@ -151,9 +197,9 @@ export default {
       open: false,
       animals: [],
       animalsSelect: [],
-      item: {_id:''},
-      title_card:'',
-      inputs:[true, true, true],
+      item: { _id: "" },
+      title_card: "",
+      inputs: [true, true, true],
       headers: [
         {
           text: "Nombre",
@@ -217,21 +263,26 @@ export default {
       axios
         .get(`competitions/listCategoria/`)
         .then((res) => {
-          
           this.data1 = res.data.filter((x) => x.type_animal == "OVINO");
           this.data1.forEach((x) => {
             x.disabled = false;
-            x.participantes = x.animals_comp.length
+            x.participantes = x.animals_comp.length;
           });
-          this.data1 = this.data1.filter((x) => (typeof x.category != "undefined"))
-
+          this.data1 = this.data1.filter(
+            (x) => typeof x.category != "undefined"
+          );
+          this.data1 = this.data1.filter((x) => x.participantes > 0);
+          console.log("data1", this.data1);
           this.data2 = res.data.filter((x) => x.type_animal == "CAPRINO");
-          console.log("data", this.data2)
           this.data2.forEach((x) => {
-            x.participantes = x.animals_comp.length
+            x.participantes = x.animals_comp.length;
             x.disabled = false;
           });
-          this.data2 = this.data2.filter((x) => (typeof x.category != "undefined"))
+          this.data2 = this.data2.filter(
+            (x) => typeof x.category != "undefined"
+          );
+          this.data2 = this.data2.filter((x) => x.participantes > 0);
+          console.log("data2", this.data2);
         })
         .catch((err) => {
           console.error(err);
@@ -262,13 +313,20 @@ export default {
         return true;
       });
 
-      select.forEach(function(x){
-        x.showname = x.tatoo+'-'+x.name
-      })
+      select.forEach(function (x) {
+        x.showname =
+          x.tatoo + "-" + x.name + " / Eq: " + x.team + " / Cr: " + x.breeder;
+      });
       console.log("el datpos", select);
       this.animalsSelect = select;
-      let sex_word = (item.sex == 'M') ? 'MACHOS' : 'HEMBRAS'
-      this.title_card = "CATEGORIA: "+item.category+"    RAZA:     "+item.race+"  SEXO:   "+sex_word
+      let sex_word = item.sex == "M" ? "MACHOS" : "HEMBRAS";
+      this.title_card =
+        "CATEGORIA: " +
+        item.category +
+        "    RAZA:     " +
+        item.race +
+        "  SEXO:   " +
+        sex_word;
       this.item = item;
       this.open = true;
     },
@@ -276,10 +334,16 @@ export default {
       this.open = false;
     },
     save(form) {
-      console.log("llego al save de category", form.first._id, form.second._id,(form.first._id === form.second._id),(form.first._id === form.third._id),
-        (form.second._id === form.third._id));
+      console.log(
+        "llego al save de category",
+        form.first._id,
+        form.second._id,
+        form.first._id === form.second._id,
+        form.first._id === form.third._id,
+        form.second._id === form.third._id
+      );
       let data = {};
-      
+
       data.id_competencia = this.item._id;
       data.name_competencia = this.item.name;
       data.category = this.item.category;
@@ -293,18 +357,20 @@ export default {
       data.pts_second = this.item.pts_second;
       data.pts_third = this.item.pts_third;
       data.type_animal = this.item.type_animal;
-      this.$swal.fire({
-        title: 'Está seguro de guardar estos resultados?',
-        showCancelButton: true,
-        cancelButtonText: 'No',
-        confirmButtonText: `Sí`,
-        customClass: {
-          cancelButton: 'order-1 right-gap',
-          confirmButton: 'order-2',
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-           axios
+      this.$swal
+        .fire({
+          title: "Está seguro de guardar estos resultados?",
+          showCancelButton: true,
+          cancelButtonText: "No",
+          confirmButtonText: `Sí`,
+          customClass: {
+            cancelButton: "order-1 right-gap",
+            confirmButton: "order-2",
+          },
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            axios
               .post("/competitions/saveCategoryC", data)
               .then((res) => {
                 this.$toast.open({
@@ -313,14 +379,17 @@ export default {
                   position: "bottom",
                   duration: 3000,
                 });
-                let pos = (this.item.type_animal == "OVINO") ? this.data1.indexOf(this.item) : this.data2.indexOf(this.item);
-                
+                let pos =
+                  this.item.type_animal == "OVINO"
+                    ? this.data1.indexOf(this.item)
+                    : this.data2.indexOf(this.item);
+
                 if (this.item.type_animal == "OVINO") {
-                  this.data1[pos].status = false;  
+                  this.data1[pos].status = false;
                 } else {
-                  this.data2[pos].status = false;  
+                  this.data2[pos].status = false;
                 }
-                
+
                 this.open = false;
               })
               .catch((err) => {
@@ -331,12 +400,77 @@ export default {
                   position: "bottom",
                   duration: 5000,
                 });
-              });  
-        } else if (result.isDenied) {
-          //this.$swal.fire('Changes are not saved', '', 'info')
-        }
-      })
-     
+              });
+          } else if (result.isDenied) {
+            //this.$swal.fire('Changes are not saved', '', 'info')
+          }
+        });
+    },
+    desert(form) {
+      let data = {};
+      data.id_competencia = this.item._id;
+      data.name_competencia = this.item.name;
+      data.category = this.item.category;
+      data.group = this.item.group;
+      data.sex = this.item.sex;
+      data.race = this.item.race;
+      data.status_result = form.status_result;
+      data.firts_animal = [];
+      data.second_animal = [];
+      data.third_animal = [];
+      data.pts_first = 0;
+      data.pts_second = 0;
+      data.pts_third = 0;
+
+      data.type_animal = this.item.type_animal;
+      this.$swal
+        .fire({
+          title: "Está seguro de declarar la competencia desierta?",
+          showCancelButton: true,
+          cancelButtonText: "No",
+          confirmButtonText: `Sí`,
+          customClass: {
+            cancelButton: "order-1 right-gap",
+            confirmButton: "order-2",
+          },
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            axios
+              .post("/competitions/saveCategoryC", data)
+              .then((res) => {
+                this.$toast.open({
+                  message: res.data.message,
+                  type: "success",
+                  position: "bottom",
+                  duration: 3000,
+                });
+                let pos =
+                  this.item.type_animal == "OVINO"
+                    ? this.data1.indexOf(this.item)
+                    : this.data2.indexOf(this.item);
+
+                if (this.item.type_animal == "OVINO") {
+                  this.data1[pos].status = false;
+                } else {
+                  this.data2[pos].status = false;
+                }
+
+                this.open = false;
+              })
+              .catch((err) => {
+                console.log(err);
+                this.$toast.open({
+                  message: "Ups!...ocurrió un error :(",
+                  type: "error",
+                  position: "bottom",
+                  duration: 5000,
+                });
+              });
+          } else if (result.isDenied) {
+            //this.$swal.fire('Changes are not saved', '', 'info')
+          }
+        });
     },
   },
 };

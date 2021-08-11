@@ -64,9 +64,9 @@
                   {{ !item.status ? "fas fa-check-double" : "fa fa-trophy" }}
                 </v-icon>
 
-                <v-icon small class="ml-4" @click="viewItem(item)">
+                <!--<v-icon small class="ml-4" @click="viewItem(item)">
                   {{ !item.status ? "fa fa-eye" : "" }}
-                </v-icon>
+                </v-icon>-->
               </template>
             </v-data-table>
             <div class="row">
@@ -102,9 +102,9 @@
                   {{ !item.status ? "fas fa-check-double" : "fa fa-trophy" }}
                 </v-icon>
 
-                <v-icon small class="ml-4" @click="viewItem(item)">
+                <!--<v-icon small class="ml-4" @click="viewItem(item)">
                   {{ !item.status ? "fa fa-eye" : "" }}
-                </v-icon>
+                </v-icon>-->
               </template>
             </v-data-table>
             <div class="row">
@@ -202,7 +202,18 @@ export default {
         .get(`competitions/listGroup/`)
         .then((res) => {
           this.data1 = res.data.filter((x) => x.type_animal == "OVINO");
+           this.data1.forEach((x) => {
+            x.disabled = false;
+            x.participantes = x.animals_comp.length;
+          });
+          this.data1 = this.data1.filter((x) => x.participantes > 0);
+          console.log("data 1", this.data1)
           this.data2 = res.data.filter((x) => x.type_animal == "CAPRINO");
+           this.data2.forEach((x) => {
+            x.disabled = false;
+            x.participantes = x.animals_comp.length;
+          });
+          this.data2 = this.data2.filter((x) => x.participantes > 0);
         })
         .catch((err) => {
           console.error(err);
@@ -225,6 +236,7 @@ export default {
         sex: item.sex,
         group: item.group,
         type_animal: item.type_animal,
+        race: item.race
       };
       let select = this.animals.filter(function (x) {
         for (var i in fil) {

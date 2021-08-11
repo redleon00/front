@@ -45,7 +45,20 @@
                       ></v-text-field>
                       </v-form>
                     </v-col>
-                    <v-col cols="12" sm="<template>6" md="4"> </v-col>
+                    <v-col cols="12" sm="6" md="4"> 
+                      <v-checkbox
+                        v-model="form.ovino"
+                        label="Ovino"
+                        class="d-inline"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4"> 
+                      <v-checkbox
+                        v-model="form.caprino"
+                        label="Caprino"
+                        class="d-inline"
+                      ></v-checkbox>
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -87,6 +100,16 @@
           class="border"
           id="table"
         >
+         <template v-slot:[`item.ovino_`]="{ item }">
+            <v-icon color="blue" small>
+              {{ item.ovino_ }}
+            </v-icon>
+          </template>
+          <template v-slot:[`item.caprino_`]="{ item }">
+            <v-icon color="blue" small>
+              {{ item.caprino_ }}
+            </v-icon>
+          </template>
         <template  v-slot:[`item.actions`]="{ item }">
             <v-icon
               small
@@ -137,7 +160,9 @@ export default {
       editedIndex: -1,
       form:{
         name: '',
-        name_large: ''
+        name_large: '',
+        ovino: false,
+        caprino: false
       },
       headers: [
         {
@@ -148,10 +173,17 @@ export default {
           class: "thead-light",
         },
         {
-          text: "Nombre",
-          align: "start",
+          text: "Ovinos",
+          align: "center",
           sortable: true,
-          value: "name_large",
+          value: "ovino_",
+          class: "thead-light",
+        },
+        {
+          text: "Caprinos",
+          align: "center",
+          sortable: true,
+          value: "caprino_",
           class: "thead-light",
         },
         {
@@ -179,7 +211,12 @@ export default {
         .get("asociations")
         .then((res) => {
           console.log(res)
-          this.data = res.data;
+          this.data = res.data.map(function (x) {
+            x.ovino_ = (x.ovino == true) ? "fa fa-check" : "";
+            x.caprino_ = (x.caprino == true) ? "fa fa-check" : "";
+            return x;
+          });
+
         })
         .catch((err) => {
           console.error(err);
@@ -192,11 +229,15 @@ export default {
        
       },
     editItem(item){
+      console.log(item)
       this.disabled = false
       this.editedIndex = this.data.indexOf(item)
       this.dialog = true
       this.form.name = item.name
       this.form.name_large = item.name_large
+      this.form.ovino = item.ovino
+      this.form.caprino = item.caprino
+
     },
       checkName(val){
         this.disabled = (val.length > 0) ? false : true
@@ -239,10 +280,14 @@ export default {
               duration: 5000,
             });
             
-            this.data[pos].name = this.form.name.toUpperCase()
-            this.data[pos].tipo = this.form.tp
+            item.name = this.data[pos].name = this.form.name.toUpperCase()
+            item.name_large = this.data[pos].tipo = this.form.tp
+            item.ovino_ = this.data[pos].ovino_ = (this.form.ovino == true) ? "fa fa-check" : ""
+            item.caprino_ = this.data[pos].caprino_ =(this.form.caprino == true) ? "fa fa-check" : ""
             this.form.name = ''
             this.form.name_large = ''
+            this.form.ovino == false
+            this.form.caprino == false
             this.dialog = false
             this.editedIndex = -1
           })

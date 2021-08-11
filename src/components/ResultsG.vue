@@ -103,9 +103,9 @@ export default {
     font-family: 'Ubuntu', sans-serif;
      position: absolute;
      -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover; 
+ -moz-background-size: 50%;
+  -o-background-size: 50%;
+  background-size: 50%;  
   
      
 }

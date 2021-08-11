@@ -217,8 +217,10 @@ export default {
         console.log(this.data)
         //this.data.map(x => x.birthday = x.birthday.substr(0, 10))
         this.data1 = this.data.filter(x => x.type == 'OVINO' )
+        this.data1.map(x => x.birthday = x.birthday.substr(0, 10))
         this.data2 = this.data.filter(x => x.type == 'CAPRINO' )
-        //console.log("animales", this.data1)
+        this.data2.map(x => x.birthday = x.birthday.substr(0, 10))
+        console.log("animales", this.data1)
 			})
 			.catch(err => {
 				console.error(err); 

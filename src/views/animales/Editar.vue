@@ -4,7 +4,7 @@
       <v-card-text>
         <v-form ref="form" @submit.prevent="submit">
           <v-card-title class="h3 font-weight-bold">
-            Editar Animal
+            Info Animal
           </v-card-title>
           <v-divider></v-divider>
 
@@ -209,6 +209,32 @@ export default {
     this.form.asociation = this.animalData.asociation;
     this.form.group = this.animalData.group;
     console.log("created", this.animalData)
+      let birth = moment(this.date);
+      let today = moment("2021-07-10"); //fecha Tope
+      let days = today.diff(birth, "days");
+      let category = this.categorys.filter(
+        (x) => days >= x.min && days <= x.max
+      );
+
+      if (days >= 90) {
+        this.form.category = category[0].name;
+        this.form.group = category[0].group;
+      } else if (days < 90 && days >= 0) {
+        this.$toast.open({
+          message: "Ejemplar no cumple con la edad mínima para concursar",
+          type: "error",
+          position: "bottom",
+          duration: 3000,
+        });
+      } else {
+        this.$toast.open({
+          message: "Fecha Inválida",
+          type: "error",
+          position: "bottom",
+          duration: 3000,
+        });
+      }
+
     
   },
   watch: {
